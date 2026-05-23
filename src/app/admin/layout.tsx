@@ -3,7 +3,7 @@ import AdminTopbar from "@/components/admin/AdminTopbar";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
-export const metadata = { title: "Admin Panel — Shelvey Dias" };
+export const metadata = { title: "Admin — Shelvey Dias" };
 export const dynamic = "force-dynamic";
 
 export default async function AdminLayout({
@@ -13,21 +13,26 @@ export default async function AdminLayout({
 }) {
   const session = await auth();
 
-  // Login page is a child of this layout too — don't redirect it
-  // Middleware handles the actual protection; this is just UI shell
-  if (!session) {
-    // Let middleware handle the redirect, just render children (login page)
-    return <>{children}</>;
-  }
+  // Unauthenticated — just render children (login page)
+  if (!session) return <>{children}</>;
 
   return (
-    <div className="min-h-screen bg-[#0f0f0f] flex">
-      <AdminSidebar />
-      <div className="flex-1 flex flex-col min-w-0">
-        <AdminTopbar />
-        <main className="flex-1 p-6 overflow-auto bg-[#fafafa]">
-          {children}
-        </main>
+    // Force light mode for admin panel regardless of site theme
+    <div className="light" style={{ colorScheme: "light" }}>
+      <div
+        className="min-h-screen flex"
+        style={{ background: "#f5f5f5", fontFamily: "var(--font-sans)" }}
+      >
+        <AdminSidebar />
+        <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+          <AdminTopbar />
+          <main
+            className="flex-1 overflow-auto p-6 lg:p-8"
+            style={{ background: "#f5f5f5" }}
+          >
+            {children}
+          </main>
+        </div>
       </div>
     </div>
   );

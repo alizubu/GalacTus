@@ -4,14 +4,12 @@ import { useEffect, useRef, useState } from "react";
 
 export default function CustomCursor() {
   const cursorRef = useRef<HTMLDivElement>(null);
-  const posX = useRef(0);
-  const posY = useRef(0);
-  const currentX = useRef(0);
-  const currentY = useRef(0);
-  const rafId = useRef<number>(0);
   const [visible, setVisible] = useState(false);
   const [clicking, setClicking] = useState(false);
   const [hovering, setHovering] = useState(false);
+  const rafId = useRef<number>(0);
+  const posX = useRef(0);
+  const posY = useRef(0);
 
   useEffect(() => {
     if ("ontouchstart" in window) return;
@@ -22,9 +20,9 @@ export default function CustomCursor() {
       if (!visible) setVisible(true);
 
       const target = e.target as HTMLElement;
-      const isInteractive =
-        target.closest("a, button, [role='button'], input, textarea, select, label") !== null;
-      setHovering(isInteractive);
+      setHovering(
+        target.closest("a, button, [role='button'], input, textarea, select, label") !== null
+      );
     };
 
     const onDown = () => setClicking(true);
@@ -38,16 +36,10 @@ export default function CustomCursor() {
     document.documentElement.addEventListener("mouseleave", onLeave);
     document.documentElement.addEventListener("mouseenter", onEnter);
 
-    // Smooth follow with lerp
-    const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
-    const speed = 0.18;
-
+    // Direct position — no lerp, instant
     const animate = () => {
-      currentX.current = lerp(currentX.current, posX.current, speed);
-      currentY.current = lerp(currentY.current, posY.current, speed);
-
       if (cursorRef.current) {
-        cursorRef.current.style.transform = `translate(${currentX.current}px, ${currentY.current}px)`;
+        cursorRef.current.style.transform = `translate(${posX.current}px, ${posY.current}px)`;
       }
       rafId.current = requestAnimationFrame(animate);
     };
@@ -65,7 +57,7 @@ export default function CustomCursor() {
 
   if (typeof window !== "undefined" && "ontouchstart" in window) return null;
 
-  const scale = clicking ? 0.85 : hovering ? 1.15 : 1;
+  const scale = clicking ? 0.82 : hovering ? 1.1 : 1;
 
   return (
     <div
@@ -78,29 +70,28 @@ export default function CustomCursor() {
         pointerEvents: "none",
         zIndex: 99999,
         opacity: visible ? 1 : 0,
-        transition: "opacity 0.2s ease",
+        transition: "opacity 0.15s ease",
         willChange: "transform",
       }}
     >
       <svg
-        width="20"
-        height="20"
-        viewBox="0 0 20 20"
+        width="22"
+        height="22"
+        viewBox="0 0 22 22"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
         style={{
           display: "block",
           transform: `scale(${scale})`,
-          transition: "transform 0.15s ease",
-          filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.35))",
+          transition: "transform 0.12s ease",
+          filter: "drop-shadow(0 1px 3px rgba(0,0,0,0.4))",
         }}
       >
-        {/* Arrow pointer shape — no tail */}
         <path
-          d="M3 2L17 9.5L10.5 11.5L8 18L3 2Z"
+          d="M4 2L18 10.5L11.5 12.5L9 19.5L4 2Z"
           fill="white"
           stroke="black"
-          strokeWidth="1.2"
+          strokeWidth="1.4"
           strokeLinejoin="round"
         />
       </svg>

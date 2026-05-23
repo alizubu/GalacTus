@@ -1,7 +1,16 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import SaveButton from "@/components/admin/SaveButton";
+
+// Load editor client-side only (SSR not supported)
+const RichTextEditor = dynamic(() => import("@/components/admin/RichTextEditor"), {
+  ssr: false,
+  loading: () => (
+    <div className="border border-gray-200 rounded-xl h-64 bg-gray-50 animate-pulse" />
+  ),
+});
 
 export default function AboutAdminPage() {
   const [bio, setBio] = useState("");
@@ -10,7 +19,10 @@ export default function AboutAdminPage() {
   useEffect(() => {
     fetch("/api/admin/content")
       .then((r) => r.json())
-      .then((data) => { setBio(data.about_bio ?? ""); setLoading(false); });
+      .then((data) => {
+        setBio(data.about_bio ?? "");
+        setLoading(false);
+      });
   }, []);
 
   const handleSave = async () => {
@@ -22,29 +34,30 @@ export default function AboutAdminPage() {
     if (!res.ok) throw new Error("Save failed");
   };
 
-  if (loading) return <div className="text-gray-400 text-sm">Loading...</div>;
+  if (loading) {
+    return (
+      <div className="max-w-3xl space-y-4">
+        <div className="h-8 w-48 bg-gray-100 rounded-lg animate-pulse" />
+        <div className="h-64 bg-gray-100 rounded-xl animate-pulse" />
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-3xl space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-gray-900">About / Bio</h1>
-        <p className="text-gray-500 text-sm mt-1">Edit your bio text (supports Markdown)</p>
+        <p className="text-gray-500 text-sm mt-1">
+          Use the toolbar to format your bio — bold, headings, lists, links and more.
+        </p>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-100 p-6">
-        <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
-          Bio Content (Markdown supported)
-        </label>
-        <textarea
-          rows={14}
-          value={bio}
-          onChange={(e) => setBio(e.target.value)}
-          placeholder="Write your bio here... Markdown is supported."
-          className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm text-gray-900 focus:outline-none focus:border-gray-400 resize-none font-mono"
+      <div className="bg-white rounded-xl border border-gray-100 p-1">
+        <RichTextEditor
+          content={bio}
+          onChange={setBio}
+          placeholder="Write your bio here..."
         />
-        <p className="text-xs text-gray-400 mt-2">
-          Tip: Use **bold**, *italic*, [link](url), and line breaks for formatting.
-        </p>
       </div>
 
       <SaveButton onSave={handleSave} />

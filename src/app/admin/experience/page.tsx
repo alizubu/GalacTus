@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Plus, Pencil, Trash2, X, Check } from "lucide-react";
+import ImageUpload from "@/components/admin/ImageUpload";
 
 interface Experience {
   id: string;
@@ -124,6 +125,11 @@ export default function ExperienceAdminPage() {
                   />
                 </div>
               ))}
+              <ImageUpload
+                label="Company Logo"
+                value={editing.logo ?? ""}
+                onChange={(url) => setEditing((p) => ({ ...p, logo: url }))}
+              />
               <div>
                 <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Description</label>
                 <textarea

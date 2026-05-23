@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Plus, Trash2, X, Check } from "lucide-react";
+import ImageUpload from "@/components/admin/ImageUpload";
 
 interface GalleryItem { id: string; src: string; alt: string; category: string; }
 
@@ -81,8 +82,12 @@ export default function GalleryAdminPage() {
               <button onClick={() => setAdding(false)} className="p-1.5 rounded-lg hover:bg-gray-100"><X size={16} /></button>
             </div>
             <div className="p-6 space-y-4">
+              <ImageUpload
+                label="Image"
+                value={form.src}
+                onChange={(url) => setForm((p) => ({ ...p, src: url }))}
+              />
               {[
-                { key: "src", label: "Image URL", placeholder: "https://..." },
                 { key: "alt", label: "Alt Text / Title", placeholder: "Social Media Poster" },
                 { key: "category", label: "Category", placeholder: "Social Media / Branding / Corporate" },
               ].map((f) => (
@@ -91,10 +96,6 @@ export default function GalleryAdminPage() {
                   <input type="text" value={(form as Record<string, string>)[f.key]} onChange={(e) => setForm((p) => ({ ...p, [f.key]: e.target.value }))} placeholder={f.placeholder} className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-gray-400" />
                 </div>
               ))}
-              {form.src && (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={form.src} alt="preview" className="w-full h-40 object-cover rounded-lg border border-gray-100" />
-              )}
             </div>
             <div className="flex justify-end gap-3 p-6 border-t">
               <button onClick={() => setAdding(false)} className="px-4 py-2 text-sm text-gray-600">Cancel</button>
