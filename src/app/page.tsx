@@ -26,7 +26,7 @@ export default function Page() {
           <div className="gap-4 flex flex-col sm:flex-row sm:items-start justify-between">
             {/* Avatar — top on mobile */}
             <BlurFade delay={BLUR_FADE_DELAY} className="flex sm:order-2 sm:ml-4">
-              <Avatar className="size-20 sm:size-28 border rounded-full shadow-lg ring-2 ring-muted shrink-0">
+              <Avatar className="size-24 sm:size-36 border-2 rounded-full shadow-xl ring-4 ring-muted shrink-0">
                 <AvatarImage alt={DATA.name} src={DATA.avatarUrl} />
                 <AvatarFallback>{DATA.initials}</AvatarFallback>
               </Avatar>
