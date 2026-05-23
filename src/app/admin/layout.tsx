@@ -1,11 +1,9 @@
-import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import AdminTopbar from "@/components/admin/AdminTopbar";
+import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
 export const metadata = { title: "Admin Panel — Shelvey Dias" };
-
-// Don't statically generate admin pages
 export const dynamic = "force-dynamic";
 
 export default async function AdminLayout({
@@ -14,7 +12,13 @@ export default async function AdminLayout({
   children: React.ReactNode;
 }) {
   const session = await auth();
-  if (!session) redirect("/admin/login");
+
+  // Login page is a child of this layout too — don't redirect it
+  // Middleware handles the actual protection; this is just UI shell
+  if (!session) {
+    // Let middleware handle the redirect, just render children (login page)
+    return <>{children}</>;
+  }
 
   return (
     <div className="min-h-screen bg-[#0f0f0f] flex">
