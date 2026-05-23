@@ -10,6 +10,7 @@ import HackathonsSection from "@/components/section/hackathons-section";
 import ProjectsSection from "@/components/section/projects-section";
 import WorkSection from "@/components/section/work-section";
 import { ArrowUpRight } from "lucide-react";
+import { FadeUp, WordReveal, BlurClear, StaggerContainer, StaggerItem } from "@/components/AnimatedText";
 
 const BLUR_FADE_DELAY = 0.04;
 
@@ -43,39 +44,33 @@ export default function Page() {
       </section>
       <section id="about">
         <div className="flex min-h-0 flex-col gap-y-4">
-          <BlurFade delay={BLUR_FADE_DELAY * 3}>
-            <h2 className="text-xl font-bold">About</h2>
-          </BlurFade>
-          <BlurFade delay={BLUR_FADE_DELAY * 4}>
+          <WordReveal
+            text="About"
+            className="text-xl font-bold"
+          />
+          <FadeUp delay={0.1}>
             <div className="prose max-w-full text-pretty font-sans leading-relaxed text-muted-foreground dark:prose-invert">
               <Markdown>
                 {DATA.summary}
               </Markdown>
             </div>
-          </BlurFade>
+          </FadeUp>
         </div>
       </section>
       <section id="work">
         <div className="flex min-h-0 flex-col gap-y-6">
-          <BlurFade delay={BLUR_FADE_DELAY * 5}>
-            <h2 className="text-xl font-bold">Work Experience</h2>
-          </BlurFade>
-          <BlurFade delay={BLUR_FADE_DELAY * 6}>
+          <WordReveal text="Work Experience" className="text-xl font-bold" />
+          <FadeUp delay={0.1}>
             <WorkSection />
-          </BlurFade>
+          </FadeUp>
         </div>
       </section>
       <section id="education">
         <div className="flex min-h-0 flex-col gap-y-6">
-          <BlurFade delay={BLUR_FADE_DELAY * 7}>
-            <h2 className="text-xl font-bold">Education</h2>
-          </BlurFade>
-          <div className="flex flex-col gap-8">
-            {DATA.education.map((education, index) => (
-              <BlurFade
-                key={education.school}
-                delay={BLUR_FADE_DELAY * 8 + index * 0.05}
-              >
+          <WordReveal text="Education" className="text-xl font-bold" />
+          <StaggerContainer className="flex flex-col gap-8" staggerDelay={0.1}>
+            {DATA.education.map((education) => (
+              <StaggerItem key={education.school}>
                 <Link
                   href={education.href}
                   target="_blank"
@@ -108,42 +103,40 @@ export default function Page() {
                     </span>
                   </div>
                 </Link>
-              </BlurFade>
+              </StaggerItem>
             ))}
-          </div>
+          </StaggerContainer>
         </div>
       </section>
       <section id="skills">
         <div className="flex min-h-0 flex-col gap-y-4">
-          <BlurFade delay={BLUR_FADE_DELAY * 9}>
-            <h2 className="text-xl font-bold">Skills</h2>
-          </BlurFade>
-          <div className="flex flex-wrap gap-2">
-            {DATA.skills.map((skill, id) => (
-              <BlurFade key={skill.name} delay={BLUR_FADE_DELAY * 10 + id * 0.05}>
+          <WordReveal text="Skills" className="text-xl font-bold" />
+          <StaggerContainer className="flex flex-wrap gap-2" staggerDelay={0.05}>
+            {DATA.skills.map((skill) => (
+              <StaggerItem key={skill.name}>
                 <div className="border bg-background border-border ring-2 ring-border/20 rounded-xl h-8 w-fit px-4 flex items-center gap-2">
                   {skill.icon && <skill.icon className="size-4 rounded overflow-hidden object-contain" />}
                   <span className="text-foreground text-sm font-medium">{skill.name}</span>
                 </div>
-              </BlurFade>
+              </StaggerItem>
             ))}
-          </div>
+          </StaggerContainer>
         </div>
       </section>
       <section id="projects">
-        <BlurFade delay={BLUR_FADE_DELAY * 11}>
+        <FadeUp>
           <ProjectsSection />
-        </BlurFade>
+        </FadeUp>
       </section>
       <section id="hackathons">
-        <BlurFade delay={BLUR_FADE_DELAY * 13}>
+        <FadeUp delay={0.05}>
           <HackathonsSection />
-        </BlurFade>
+        </FadeUp>
       </section>
       <section id="contact">
-        <BlurFade delay={BLUR_FADE_DELAY * 16}>
+        <BlurClear delay={0.05}>
           <ContactSection />
-        </BlurFade>
+        </BlurClear>
       </section>
     </main>
   );
