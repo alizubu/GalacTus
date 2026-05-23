@@ -68,16 +68,40 @@ export const DATA = {
 
   work: [
     {
-      company: "Self-Employed / Freelance",
-      href: "https://www.shelveyswork.com",
-      badges: ["Full-time"],
+      company: "Hirdaramani Bangladesh",
+      href: "https://www.hirdaramani.com",
+      badges: ["Current"],
       location: "Chittagong, Bangladesh",
-      title: "Digital Marketing Strategist & Web Developer",
-      logoUrl: "/me.png",
-      start: "2020",
+      title: "R&D Executive",
+      logoUrl: "",
+      start: "Jan 2026",
       end: "Present",
       description:
-        "Providing end-to-end digital marketing and web development services to corporate clients. Delivered 50+ projects with 100% client satisfaction rate. Specializing in Meta Ads, Google Ads, SEO, and high-converting website design for businesses in logistics, manufacturing, and export sectors.",
+        "Leading research and development initiatives focused on market intelligence, digital innovation, and growth strategy for one of South Asia's largest apparel conglomerates. Conducting in-depth market research to identify emerging trends and business opportunities. Driving digital transformation projects and contributing to long-term organizational growth strategy.",
+    },
+    {
+      company: "Golden Son Ltd.",
+      href: "#",
+      badges: [],
+      location: "Chittagong, Bangladesh",
+      title: "Senior Digital Marketing Officer",
+      logoUrl: "",
+      start: "2021",
+      end: "Dec 2025",
+      description:
+        "Developed and executed full-funnel digital marketing strategies driving measurable business growth. Managed end-to-end performance marketing campaigns across Meta, Google, and LinkedIn. Oversaw brand positioning, lead generation funnels, and ROI-focused ad spend optimization across multiple product lines.",
+    },
+    {
+      company: "Dainik Purbokone",
+      href: "#",
+      badges: [],
+      location: "Chittagong, Bangladesh",
+      title: "Executive — Advertisement",
+      logoUrl: "",
+      start: "2018",
+      end: "Nov 2021",
+      description:
+        "Managed digital advertising sales and monetization strategies for one of Chittagong's leading news media outlets. Built and maintained relationships with corporate advertisers, driving consistent ad revenue growth. Pioneered digital ad sales channels alongside traditional print advertising to grow overall media monetization.",
     },
   ],
 
