@@ -5,6 +5,9 @@ import AdminTopbar from "@/components/admin/AdminTopbar";
 
 export const metadata = { title: "Admin Panel — Shelvey Dias" };
 
+// Don't statically generate admin pages
+export const dynamic = "force-dynamic";
+
 export default async function AdminLayout({
   children,
 }: {

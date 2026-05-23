@@ -1,14 +1,23 @@
 import Link from "next/link";
-import { Briefcase, FolderKanban, Wrench, MessageSquare, ExternalLink } from "lucide-react";
-import { db } from "@/lib/db";
+import { Briefcase, FolderKanban, Wrench, MessageSquare, ExternalLink, AlertTriangle } from "lucide-react";
+
+async function getStats() {
+  try {
+    const { db } = await import("@/lib/db");
+    const [expCount, projCount, skillCount, unread] = await Promise.all([
+      db.experience.count(),
+      db.project.count(),
+      db.skill.count(),
+      db.contactMessage.count({ where: { read: false } }),
+    ]);
+    return { expCount, projCount, skillCount, unread, dbOk: true };
+  } catch {
+    return { expCount: 0, projCount: 0, skillCount: 0, unread: 0, dbOk: false };
+  }
+}
 
 export default async function AdminDashboard() {
-  const [expCount, projCount, skillCount, unread] = await Promise.all([
-    db.experience.count(),
-    db.project.count(),
-    db.skill.count(),
-    db.contactMessage.count({ where: { read: false } }),
-  ]);
+  const { expCount, projCount, skillCount, unread, dbOk } = await getStats();
 
   const stats = [
     { label: "Work Entries", value: expCount, icon: Briefcase, href: "/admin/experience" },
@@ -32,6 +41,19 @@ export default async function AdminDashboard() {
         <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
         <p className="text-gray-500 text-sm mt-1">Welcome back, Admin</p>
       </div>
+
+      {/* DB warning */}
+      {!dbOk && (
+        <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-xl p-4">
+          <AlertTriangle size={18} className="text-amber-500 shrink-0 mt-0.5" />
+          <div>
+            <p className="text-sm font-semibold text-amber-800">Database not connected</p>
+            <p className="text-xs text-amber-600 mt-0.5">
+              Add <code className="bg-amber-100 px-1 rounded">DATABASE_URL</code> to your Vercel environment variables, then redeploy.
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -70,7 +92,6 @@ export default async function AdminDashboard() {
         </div>
       </div>
 
-      {/* View site */}
       <a
         href="/"
         target="_blank"
