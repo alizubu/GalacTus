@@ -161,7 +161,11 @@ export function ContactForm() {
       <button
         type="submit"
         disabled={isSubmitting || isSuccess}
-        className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-70 transition-all duration-200"
+        className="flex w-full items-center justify-center gap-2 rounded-lg px-6 py-3 text-sm font-semibold transition-all duration-200 disabled:opacity-70"
+        style={{
+          backgroundColor: "var(--primary)",
+          color: "var(--primary-foreground)",
+        }}
       >
         {isSubmitting ? (
           <>

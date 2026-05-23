@@ -112,7 +112,12 @@
 }
 
 /* ── Custom cursor: hide default ── */
-*, *::before, *::after {
+html, body, * {
+  cursor: none !important;
+}
+
+/* Restore pointer for interactive elements so OS doesn't show anything unexpected */
+a, button, [role="button"], input, textarea, select, label, [tabindex] {
   cursor: none !important;
 }
 

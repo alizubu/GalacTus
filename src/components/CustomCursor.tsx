@@ -3,19 +3,15 @@
 import { useEffect, useRef, useState } from "react";
 
 export default function CustomCursor() {
-  const dotRef = useRef<HTMLDivElement>(null);
-  const ringRef = useRef<HTMLDivElement>(null);
+  const cursorRef = useRef<HTMLDivElement>(null);
 
   const mouseX = useRef(0);
   const mouseY = useRef(0);
-  const trailX = useRef(0);
-  const trailY = useRef(0);
   const rafId = useRef<number>(0);
 
   const [visible, setVisible] = useState(false);
   const [clicking, setClicking] = useState(false);
   const [hovering, setHovering] = useState(false);
-  const [isText, setIsText] = useState(false);
 
   useEffect(() => {
     // Disable on touch devices
@@ -24,25 +20,14 @@ export default function CustomCursor() {
     const onMouseMove = (e: MouseEvent) => {
       mouseX.current = e.clientX;
       mouseY.current = e.clientY;
-
       if (!visible) setVisible(true);
 
-      // Move dot instantly
-      if (dotRef.current) {
-        dotRef.current.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
-      }
-
-      // Detect interactive elements
       const target = e.target as HTMLElement;
       const isInteractive =
-        target.closest("a, button, [role='button'], input, textarea, select, label") !== null;
-      const isTextEl =
-        !isInteractive &&
-        (target.closest("p, span, h1, h2, h3, h4, h5, h6, li, blockquote") !== null ||
-          window.getComputedStyle(target).cursor === "text");
-
+        target.closest(
+          "a, button, [role='button'], input, textarea, select, label, [tabindex]"
+        ) !== null;
       setHovering(isInteractive);
-      setIsText(isTextEl);
     };
 
     const onMouseDown = () => setClicking(true);
@@ -56,16 +41,10 @@ export default function CustomCursor() {
     document.documentElement.addEventListener("mouseleave", onMouseLeave);
     document.documentElement.addEventListener("mouseenter", onMouseEnter);
 
-    // Trailing ring animation loop
     const animate = () => {
-      const lag = 0.12;
-      trailX.current += (mouseX.current - trailX.current) * lag;
-      trailY.current += (mouseY.current - trailY.current) * lag;
-
-      if (ringRef.current) {
-        ringRef.current.style.transform = `translate(${trailX.current}px, ${trailY.current}px)`;
+      if (cursorRef.current) {
+        cursorRef.current.style.transform = `translate(${mouseX.current}px, ${mouseY.current}px)`;
       }
-
       rafId.current = requestAnimationFrame(animate);
     };
     rafId.current = requestAnimationFrame(animate);
@@ -80,63 +59,56 @@ export default function CustomCursor() {
     };
   }, [visible]);
 
-  // Don't render on server
   if (typeof window !== "undefined" && "ontouchstart" in window) return null;
 
-  const dotScale = clicking ? 0.8 : hovering ? 0 : 1;
-  const ringScale = clicking ? 0.8 : hovering ? 1.5 : isText ? 0.4 : 1;
-
   return (
-    <>
-      {/* Small solid dot */}
+    <div
+      ref={cursorRef}
+      aria-hidden="true"
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        pointerEvents: "none",
+        zIndex: 99999,
+        marginLeft: -10,
+        marginTop: -10,
+        opacity: visible ? 1 : 0,
+        transition: "opacity 0.2s ease",
+        willChange: "transform",
+      }}
+    >
+      {/* Outer ring — expands on hover */}
       <div
-        ref={dotRef}
-        aria-hidden="true"
         style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          width: 8,
-          height: 8,
-          borderRadius: "50%",
-          backgroundColor: "white",
+          position: "absolute",
+          width: 20,
+          height: 20,
+          border: "1.5px solid currentColor",
+          borderRadius: 3,
+          color: "var(--foreground)",
           mixBlendMode: "difference",
-          pointerEvents: "none",
-          zIndex: 99999,
-          marginLeft: -4,
-          marginTop: -4,
-          opacity: visible ? 1 : 0,
-          transform: "translate(0px, 0px)",
-          scale: String(dotScale),
-          transition: "opacity 0.3s ease, scale 0.15s ease",
-          willChange: "transform",
+          transform: `scale(${clicking ? 0.7 : hovering ? 2.2 : 1}) rotate(${hovering ? 45 : 0}deg)`,
+          transition:
+            "transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.2s ease",
+          opacity: hovering ? 0.6 : 0.9,
         }}
       />
-
-      {/* Large trailing ring */}
+      {/* Inner dot — hides on hover */}
       <div
-        ref={ringRef}
-        aria-hidden="true"
         style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          width: 32,
-          height: 32,
-          borderRadius: "50%",
-          border: "1.5px solid white",
+          position: "absolute",
+          width: 4,
+          height: 4,
+          borderRadius: 1,
+          backgroundColor: "var(--foreground)",
           mixBlendMode: "difference",
-          pointerEvents: "none",
-          zIndex: 99998,
-          marginLeft: -16,
-          marginTop: -16,
-          opacity: visible ? 1 : 0,
-          transform: "translate(0px, 0px)",
-          scale: String(ringScale),
-          transition: "opacity 0.3s ease, scale 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
-          willChange: "transform",
+          top: 8,
+          left: 8,
+          transform: `scale(${clicking ? 2 : hovering ? 0 : 1})`,
+          transition: "transform 0.2s ease",
         }}
       />
-    </>
+    </div>
   );
 }
