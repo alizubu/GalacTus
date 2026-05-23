@@ -14,6 +14,7 @@ import AboutStats from "@/components/section/about-stats";
 import SkillsSection from "@/components/section/skills-section";
 import { ArrowUpRight } from "lucide-react";
 import { FadeUp, WordReveal, BlurClear, StaggerContainer, StaggerItem } from "@/components/AnimatedText";
+import { SectionTitle } from "@/components/SectionTitle";
 
 const BLUR_FADE_DELAY = 0.04;
 
@@ -51,10 +52,10 @@ export default function Page() {
         </div>
       </section>
       <section id="about">
-        <div className="flex min-h-0 flex-col gap-y-4">
-          <WordReveal text="About" className="text-xl font-bold" />
+        <div className="flex min-h-0 flex-col gap-y-5">
+          <SectionTitle title="About" subtitle="Who I Am" />
           <FadeUp delay={0.1}>
-            <div className="prose max-w-full font-sans leading-relaxed text-muted-foreground dark:prose-invert [&>p]:text-justify">
+            <div className="prose max-w-full font-sans leading-relaxed text-foreground/80 dark:prose-invert [&>p]:text-justify">
               <Markdown>{DATA.summary}</Markdown>
             </div>
           </FadeUp>
@@ -62,16 +63,16 @@ export default function Page() {
         </div>
       </section>
       <section id="work">
-        <div className="flex min-h-0 flex-col gap-y-6">
-          <WordReveal text="Work Experience" className="text-xl font-bold" />
+        <div className="flex min-h-0 flex-col gap-y-5">
+          <SectionTitle title="Work Experience" subtitle="Career Timeline" />
           <FadeUp delay={0.1}>
             <WorkSection />
           </FadeUp>
         </div>
       </section>
       <section id="education">
-        <div className="flex min-h-0 flex-col gap-y-6">
-          <WordReveal text="Education" className="text-xl font-bold" />
+        <div className="flex min-h-0 flex-col gap-y-5">
+          <SectionTitle title="Education" subtitle="Academic Background" />
           <StaggerContainer className="flex flex-col gap-3" staggerDelay={0.1}>
             {DATA.education.map((edu) => {
               const school = edu.school as string;
@@ -120,8 +121,8 @@ export default function Page() {
         </div>
       </section>
       <section id="skills">
-        <div className="flex min-h-0 flex-col gap-y-4">
-          <WordReveal text="Skills" className="text-xl font-bold" />
+        <div className="flex min-h-0 flex-col gap-y-5">
+          <SectionTitle title="Skills" subtitle="Technical Expertise" />
           <SkillsSection />
         </div>
       </section>

@@ -183,6 +183,11 @@
     @apply bg-background text-foreground;
   }
 
+  /* Improve prose body text contrast in both modes */
+  .prose p, .prose li, .prose td {
+    @apply text-foreground/85;
+  }
+
   /* Shiki dual theme support */
   .shiki,
   .shiki span {
