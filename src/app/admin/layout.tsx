@@ -1,5 +1,6 @@
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import AdminTopbar from "@/components/admin/AdminTopbar";
+import { redirect } from "next/navigation";
 
 export const metadata = { title: "Admin — Shelvey Dias" };
 export const dynamic = "force-dynamic";
@@ -20,8 +21,9 @@ export default async function AdminLayout({
 }) {
   const session = await getSession();
 
-  // Not authenticated — render login page without admin chrome
-  if (!session) return <>{children}</>;
+  if (!session) {
+    redirect("/admin/login");
+  }
 
   return (
     <div
@@ -34,9 +36,24 @@ export default async function AdminLayout({
       }}
     >
       <AdminSidebar />
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0, overflow: "hidden" }}>
+      <div
+        style={{
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+          minWidth: 0,
+          overflow: "hidden",
+        }}
+      >
         <AdminTopbar />
-        <main style={{ flex: 1, overflow: "auto", padding: "24px", background: "#f0f0f0" }}>
+        <main
+          style={{
+            flex: 1,
+            overflow: "auto",
+            padding: "24px",
+            background: "#f0f0f0",
+          }}
+        >
           {children}
         </main>
       </div>
