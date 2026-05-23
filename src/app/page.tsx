@@ -10,6 +10,8 @@ import HackathonsSection from "@/components/section/hackathons-section";
 import ProjectsSection from "@/components/section/projects-section";
 import WorkSection from "@/components/section/work-section";
 import TestimonialsSection from "@/components/section/testimonials-section";
+import AboutStats from "@/components/section/about-stats";
+import SkillsSection from "@/components/section/skills-section";
 import { ArrowUpRight } from "lucide-react";
 import { FadeUp, WordReveal, BlurClear, StaggerContainer, StaggerItem } from "@/components/AnimatedText";
 
@@ -56,6 +58,7 @@ export default function Page() {
               <Markdown>{DATA.summary}</Markdown>
             </div>
           </FadeUp>
+          <AboutStats />
         </div>
       </section>
       <section id="work">
@@ -119,32 +122,7 @@ export default function Page() {
       <section id="skills">
         <div className="flex min-h-0 flex-col gap-y-4">
           <WordReveal text="Skills" className="text-xl font-bold" />
-          <StaggerContainer className="flex flex-wrap gap-2" staggerDelay={0.04}>
-            {DATA.skills.map((skill) => (
-              <StaggerItem key={skill.name}>
-                <div
-                  className="group relative h-8 w-fit px-4 flex items-center gap-2 rounded-full
-                             border border-border/60 bg-background
-                             hover:border-primary/40 hover:bg-primary/5
-                             hover:shadow-[0_0_12px_rgba(99,102,241,0.15)]
-                             transition-all duration-300 overflow-hidden"
-                >
-                  {/* Shimmer on hover */}
-                  <div
-                    className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                    style={{
-                      background: "linear-gradient(105deg, transparent 40%, rgba(99,102,241,0.08) 50%, transparent 60%)",
-                      backgroundSize: "200% 100%",
-                      animation: "shimmer 1.5s infinite",
-                    }}
-                  />
-                  <span className="relative text-foreground text-xs font-medium tracking-wide">
-                    {skill.name}
-                  </span>
-                </div>
-              </StaggerItem>
-            ))}
-          </StaggerContainer>
+          <SkillsSection />
         </div>
       </section>
       <section id="projects">
