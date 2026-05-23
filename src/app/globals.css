@@ -154,17 +154,20 @@
 }
 
 .animate-marquee-ltr {
-  animation: marquee-ltr 30s linear infinite;
+  animation: marquee-ltr 35s linear infinite;
   will-change: transform;
 }
 
 .animate-marquee-rtl {
-  animation: marquee-rtl 30s linear infinite;
+  animation: marquee-rtl 35s linear infinite;
   will-change: transform;
 }
 
+/* Pause when hovering the track itself OR the parent wrapper */
 .animate-marquee-ltr:hover,
-.animate-marquee-rtl:hover {
+.animate-marquee-rtl:hover,
+.group:hover .animate-marquee-ltr,
+.group:hover .animate-marquee-rtl {
   animation-play-state: paused;
 }
 
