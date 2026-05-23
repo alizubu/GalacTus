@@ -147,6 +147,12 @@ a, button, [role="button"], input, textarea, select, label, [tabindex] {
   100% { transform: translate(-50px, 60px) scale(0.92); }
 }
 
+/* ── Skill shimmer ── */
+@keyframes shimmer {
+  0%   { background-position: 200% center; }
+  100% { background-position: -200% center; }
+}
+
 /* ── Marquee animations ── */
 @keyframes marquee-ltr {
   0%   { transform: translateX(0); }

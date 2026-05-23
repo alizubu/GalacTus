@@ -50,15 +50,10 @@ export default function Page() {
       </section>
       <section id="about">
         <div className="flex min-h-0 flex-col gap-y-4">
-          <WordReveal
-            text="About"
-            className="text-xl font-bold"
-          />
+          <WordReveal text="About" className="text-xl font-bold" />
           <FadeUp delay={0.1}>
-            <div className="prose max-w-full text-pretty font-sans leading-relaxed text-muted-foreground dark:prose-invert">
-              <Markdown>
-                {DATA.summary}
-              </Markdown>
+            <div className="prose max-w-full font-sans leading-relaxed text-muted-foreground dark:prose-invert [&>p]:text-justify">
+              <Markdown>{DATA.summary}</Markdown>
             </div>
           </FadeUp>
         </div>
@@ -74,54 +69,78 @@ export default function Page() {
       <section id="education">
         <div className="flex min-h-0 flex-col gap-y-6">
           <WordReveal text="Education" className="text-xl font-bold" />
-          <StaggerContainer className="flex flex-col gap-8" staggerDelay={0.1}>
-            {DATA.education.map((education) => (
-              <StaggerItem key={education.school}>
-                <Link
-                  href={education.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-x-3 justify-between group"
-                >
-                  <div className="flex items-center gap-x-3 flex-1 min-w-0">
-                    {education.logoUrl ? (
+          <StaggerContainer className="flex flex-col gap-3" staggerDelay={0.1}>
+            {DATA.education.map((edu) => {
+              const school = edu.school as string;
+              const degree = edu.degree as string;
+              const logoUrl = (edu as { logoUrl?: string }).logoUrl ?? "";
+              const href = edu.href as string;
+              const start = edu.start as string;
+              const end = edu.end as string;
+              return (
+                <StaggerItem key={school}>
+                  <Link
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-x-4 p-4 rounded-2xl border bg-card/50
+                               hover:bg-card hover:shadow-sm transition-all duration-300 group"
+                  >
+                    {logoUrl ? (
                       <img
-                        src={education.logoUrl}
-                        alt={education.school}
-                        className="size-8 md:size-10 p-1 border rounded-full shadow ring-2 ring-border overflow-hidden object-contain flex-none"
+                        src={logoUrl}
+                        alt={school}
+                        className="size-10 p-1.5 border rounded-xl bg-card object-contain shrink-0 ring-2 ring-border/40"
                       />
                     ) : (
-                      <div className="size-8 md:size-10 p-1 border rounded-full shadow ring-2 ring-border bg-muted flex-none" />
-                    )}
-                    <div className="flex-1 min-w-0 flex flex-col gap-0.5">
-                      <div className="font-semibold leading-none flex items-center gap-2">
-                        {education.school}
-                        <ArrowUpRight className="h-3.5 w-3.5 text-muted-foreground opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200" aria-hidden />
+                      <div className="size-10 rounded-xl border bg-muted shrink-0 ring-2 ring-border/40 flex items-center justify-center text-xs font-bold text-muted-foreground">
+                        {school.slice(0, 2).toUpperCase()}
                       </div>
-                      <div className="font-sans text-sm text-muted-foreground">
-                        {education.degree}
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <div className="font-semibold text-sm leading-none flex items-center gap-2">
+                        {school}
+                        <ArrowUpRight className="h-3 w-3 text-muted-foreground opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200" aria-hidden />
+                      </div>
+                      <div className="text-xs text-muted-foreground mt-1 text-justify">
+                        {degree}
                       </div>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-1 text-xs tabular-nums text-muted-foreground text-right flex-none">
-                    <span>
-                      {education.start} - {education.end}
-                    </span>
-                  </div>
-                </Link>
-              </StaggerItem>
-            ))}
+                    <div className="text-xs tabular-nums text-muted-foreground/60 shrink-0 text-right">
+                      {start}–{end}
+                    </div>
+                  </Link>
+                </StaggerItem>
+              );
+            })}
           </StaggerContainer>
         </div>
       </section>
       <section id="skills">
         <div className="flex min-h-0 flex-col gap-y-4">
           <WordReveal text="Skills" className="text-xl font-bold" />
-          <StaggerContainer className="flex flex-wrap gap-2" staggerDelay={0.05}>
+          <StaggerContainer className="flex flex-wrap gap-2" staggerDelay={0.04}>
             {DATA.skills.map((skill) => (
               <StaggerItem key={skill.name}>
-                <div className="border bg-background border-border ring-2 ring-border/20 rounded-xl h-8 w-fit px-4 flex items-center gap-2">
-                  <span className="text-foreground text-sm font-medium">{skill.name}</span>
+                <div
+                  className="group relative h-8 w-fit px-4 flex items-center gap-2 rounded-full
+                             border border-border/60 bg-background
+                             hover:border-primary/40 hover:bg-primary/5
+                             hover:shadow-[0_0_12px_rgba(99,102,241,0.15)]
+                             transition-all duration-300 overflow-hidden"
+                >
+                  {/* Shimmer on hover */}
+                  <div
+                    className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                    style={{
+                      background: "linear-gradient(105deg, transparent 40%, rgba(99,102,241,0.08) 50%, transparent 60%)",
+                      backgroundSize: "200% 100%",
+                      animation: "shimmer 1.5s infinite",
+                    }}
+                  />
+                  <span className="relative text-foreground text-xs font-medium tracking-wide">
+                    {skill.name}
+                  </span>
                 </div>
               </StaggerItem>
             ))}
