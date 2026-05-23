@@ -316,6 +316,5 @@ export const DATA = {
     },
   ],
 
-  // Creative Gallery section kept for future use
-  hackathons: [],
+  // gallery array kept above
 } as const;

@@ -27,7 +27,7 @@ export default function HackathonsSection({ items }: { items: GalleryItem[] }) {
   const row2 = [...[...items].reverse(), ...[...items].reverse(), ...[...items].reverse()];
 
   return (
-    <section id="hackathons" className="overflow-hidden">
+    <section id="gallery" className="overflow-hidden">
       <div className="flex min-h-0 flex-col gap-y-8 w-full">
         <div className="flex flex-col gap-y-4 items-center justify-center text-center">
           <div className="flex items-center w-full">

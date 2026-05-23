@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
 import Markdown from "react-markdown";
 import ContactSection from "@/components/section/contact-section";
-import HackathonsSection from "@/components/section/hackathons-section";
+import GallerySection from "@/components/section/gallery-section";
 import ProjectsSection from "@/components/section/projects-section";
 import TestimonialsSection from "@/components/section/testimonials-section";
 import AboutStats from "@/components/section/about-stats";
@@ -164,9 +164,9 @@ export default async function Page() {
       </section>
 
       {/* ── Gallery ── */}
-      <section id="hackathons">
+      <section id="gallery">
         <FadeUp delay={0.05}>
-          <HackathonsSection items={gallery} />
+          <GallerySection items={gallery} />
         </FadeUp>
       </section>
 
