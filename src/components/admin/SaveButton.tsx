@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Loader2, Check } from "lucide-react";
+import { Loader2, Check, Save } from "lucide-react";
 
 interface Props {
   onSave: () => Promise<void>;
@@ -27,14 +27,23 @@ export default function SaveButton({ onSave, label = "Save Changes" }: Props) {
     <button
       onClick={handleClick}
       disabled={state !== "idle"}
-      className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all ${
-        state === "saved"
-          ? "bg-green-500 text-white"
-          : "bg-gray-900 text-white hover:bg-gray-700 disabled:opacity-60"
-      }`}
+      className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 disabled:opacity-60"
+      style={{
+        background:
+          state === "saved"
+            ? "linear-gradient(135deg, #22c55e, #16a34a)"
+            : "linear-gradient(135deg, #1a1a1a, #2d2d2d)",
+        color: "white",
+        boxShadow:
+          state === "saved"
+            ? "0 4px 16px rgba(34,197,94,0.3)"
+            : "0 4px 16px rgba(0,0,0,0.15)",
+        border: "1px solid rgba(255,255,255,0.08)",
+      }}
     >
       {state === "saving" && <Loader2 size={14} className="animate-spin" />}
       {state === "saved" && <Check size={14} />}
+      {state === "idle" && <Save size={14} />}
       {state === "saving" ? "Saving..." : state === "saved" ? "Saved!" : label}
     </button>
   );

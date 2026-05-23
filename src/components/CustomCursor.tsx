@@ -4,12 +4,15 @@ import { useEffect, useRef, useState } from "react";
 
 export default function CustomCursor() {
   const cursorRef = useRef<HTMLDivElement>(null);
+  const posX = useRef(0);
+  const posY = useRef(0);
+  const curX = useRef(0);
+  const curY = useRef(0);
+  const rafId = useRef<number>(0);
+
   const [visible, setVisible] = useState(false);
   const [clicking, setClicking] = useState(false);
   const [hovering, setHovering] = useState(false);
-  const rafId = useRef<number>(0);
-  const posX = useRef(0);
-  const posY = useRef(0);
 
   useEffect(() => {
     if ("ontouchstart" in window) return;
@@ -21,7 +24,7 @@ export default function CustomCursor() {
 
       const target = e.target as HTMLElement;
       setHovering(
-        target.closest("a, button, [role='button'], input, textarea, select, label") !== null
+        target.closest("a, button, [role='button'], input, textarea, select, label, [tabindex]") !== null
       );
     };
 
@@ -36,10 +39,15 @@ export default function CustomCursor() {
     document.documentElement.addEventListener("mouseleave", onLeave);
     document.documentElement.addEventListener("mouseenter", onEnter);
 
-    // Direct position — no lerp, instant
+    // Very light lerp — feels natural, not laggy
+    const SPEED = 0.55;
+
     const animate = () => {
+      curX.current += (posX.current - curX.current) * SPEED;
+      curY.current += (posY.current - curY.current) * SPEED;
+
       if (cursorRef.current) {
-        cursorRef.current.style.transform = `translate(${posX.current}px, ${posY.current}px)`;
+        cursorRef.current.style.transform = `translate(${curX.current}px, ${curY.current}px)`;
       }
       rafId.current = requestAnimationFrame(animate);
     };
@@ -57,7 +65,8 @@ export default function CustomCursor() {
 
   if (typeof window !== "undefined" && "ontouchstart" in window) return null;
 
-  const scale = clicking ? 0.82 : hovering ? 1.1 : 1;
+  // Scale: click shrinks, hover enlarges slightly
+  const scale = clicking ? 0.78 : hovering ? 1.2 : 1;
 
   return (
     <div
@@ -70,28 +79,36 @@ export default function CustomCursor() {
         pointerEvents: "none",
         zIndex: 99999,
         opacity: visible ? 1 : 0,
-        transition: "opacity 0.15s ease",
+        transition: "opacity 0.2s ease",
         willChange: "transform",
       }}
     >
       <svg
-        width="22"
-        height="22"
-        viewBox="0 0 22 22"
+        width="26"
+        height="26"
+        viewBox="0 0 26 26"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
         style={{
           display: "block",
           transform: `scale(${scale})`,
-          transition: "transform 0.12s ease",
-          filter: "drop-shadow(0 1px 3px rgba(0,0,0,0.4))",
+          transition: "transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1)",
+          filter: "drop-shadow(0 2px 6px rgba(0,0,0,0.45)) drop-shadow(0 0 1px rgba(0,0,0,0.6))",
         }}
       >
+        {/* Outer arrow — white fill */}
         <path
-          d="M4 2L18 10.5L11.5 12.5L9 19.5L4 2Z"
+          d="M4.5 2.5L21 12.5L13.5 14.8L10.5 22.5L4.5 2.5Z"
           fill="white"
-          stroke="black"
-          strokeWidth="1.4"
+          stroke="rgba(0,0,0,0.15)"
+          strokeWidth="0.5"
+        />
+        {/* Inner shadow line for depth */}
+        <path
+          d="M4.5 2.5L21 12.5L13.5 14.8L10.5 22.5L4.5 2.5Z"
+          fill="none"
+          stroke="rgba(0,0,0,0.5)"
+          strokeWidth="1.2"
           strokeLinejoin="round"
         />
       </svg>
