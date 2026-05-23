@@ -5,11 +5,16 @@ export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const isLoginPage = pathname === "/admin/login";
 
-  const token = await getToken({
-    req,
-    secret: process.env.NEXTAUTH_SECRET ?? "fallback-secret-change-in-production",
-  });
+  const secret = process.env.NEXTAUTH_SECRET;
+  if (!secret) {
+    // Block all admin access if secret is not configured
+    if (!isLoginPage) {
+      return NextResponse.redirect(new URL("/admin/login", req.url));
+    }
+    return NextResponse.next();
+  }
 
+  const token = await getToken({ req, secret });
   const isAuthenticated = !!token;
 
   if (isLoginPage && isAuthenticated) {

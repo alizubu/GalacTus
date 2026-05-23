@@ -13,22 +13,21 @@ const STATS = [
 function CountUp({ to, suffix, duration = 1.4 }: { to: number; suffix: string; duration?: number }) {
   const [count, setCount] = useState(0);
   const ref = useRef<HTMLSpanElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-40px" });
+  const isInView = useInView(ref, { once: true, margin: "0px" }); // safe margin for all viewports
 
   useEffect(() => {
     if (!isInView) return;
-    let start = 0;
     const startTime = performance.now();
+    let raf: number;
     const step = (now: number) => {
       const elapsed = (now - startTime) / 1000;
       const progress = Math.min(elapsed / duration, 1);
-      // Ease out cubic
       const eased = 1 - Math.pow(1 - progress, 3);
-      start = Math.round(eased * to);
-      setCount(start);
-      if (progress < 1) requestAnimationFrame(step);
+      setCount(Math.round(eased * to));
+      if (progress < 1) { raf = requestAnimationFrame(step); }
     };
-    requestAnimationFrame(step);
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf); // cleanup on unmount
   }, [isInView, to, duration]);
 
   return (

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Send, Loader2, CheckCircle } from "lucide-react";
 
 interface FormData {
@@ -44,6 +44,10 @@ export function ContactForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [serverError, setServerError] = useState("");
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Cleanup timeout on unmount to prevent state update on unmounted component
+  useEffect(() => () => { if (timerRef.current) clearTimeout(timerRef.current); }, []);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -77,9 +81,10 @@ export function ContactForm() {
       if (response.ok) {
         setIsSuccess(true);
         setForm({ name: "", email: "", subject: "", message: "" });
-        setTimeout(() => setIsSuccess(false), 5000);
+        timerRef.current = setTimeout(() => setIsSuccess(false), 5000);
       } else {
-        setServerError("Something went wrong. Please try again or email directly.");
+        const data = await response.json().catch(() => ({}));
+        setServerError(data.error ?? "Something went wrong. Please try again or email directly.");
       }
     } catch {
       setServerError("Network error. Please check your connection and try again.");

@@ -18,7 +18,10 @@ export default function ContactAdminPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/admin/content").then((r) => r.json()).then((d) => { setValues(d); setLoading(false); });
+    fetch("/api/admin/content")
+      .then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
+      .then((d) => { setValues(d); setLoading(false); })
+      .catch((err) => { console.error(err); setLoading(false); });
   }, []);
 
   const handleSave = async () => {
@@ -29,7 +32,7 @@ export default function ContactAdminPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
-    if (!res.ok) throw new Error("Save failed");
+    if (!res.ok) { const d = await res.json().catch(() => ({})); throw new Error(d.error ?? "Save failed"); }
   };
 
   if (loading) return <div className="text-gray-400 text-sm">Loading...</div>;

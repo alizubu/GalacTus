@@ -6,18 +6,41 @@ import { revalidatePath } from "next/cache";
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const guard = await requireAdmin();
   if (guard) return guard;
-  const { id } = await params;
-  const body = await req.json();
-  const item = await db.project.update({ where: { id }, data: body });
-  revalidatePath("/");
-  return NextResponse.json(item);
+  try {
+    const { id } = await params;
+    const { title, href, description, imageUrl, videoUrl, tags, dates, featured } =
+      await req.json();
+    const item = await db.project.update({
+      where: { id },
+      data: {
+        ...(title !== undefined && { title: String(title) }),
+        ...(href !== undefined && { href: String(href) }),
+        ...(description !== undefined && { description: String(description) }),
+        ...(imageUrl !== undefined && { imageUrl: String(imageUrl) }),
+        ...(videoUrl !== undefined && { videoUrl: String(videoUrl) }),
+        ...(tags !== undefined && { tags: Array.isArray(tags) ? tags.map(String) : [] }),
+        ...(dates !== undefined && { dates: String(dates) }),
+        ...(featured !== undefined && { featured: Boolean(featured) }),
+      },
+    });
+    revalidatePath("/");
+    return NextResponse.json(item);
+  } catch (error) {
+    console.error("Projects PUT error:", error);
+    return NextResponse.json({ error: "Failed to update project." }, { status: 500 });
+  }
 }
 
 export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const guard = await requireAdmin();
   if (guard) return guard;
-  const { id } = await params;
-  await db.project.delete({ where: { id } });
-  revalidatePath("/");
-  return NextResponse.json({ success: true });
+  try {
+    const { id } = await params;
+    await db.project.delete({ where: { id } });
+    revalidatePath("/");
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Projects DELETE error:", error);
+    return NextResponse.json({ error: "Failed to delete project." }, { status: 500 });
+  }
 }

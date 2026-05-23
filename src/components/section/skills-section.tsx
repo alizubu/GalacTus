@@ -64,14 +64,27 @@ export default function SkillsSection({ items }: { items: SkillItem[] }) {
     }),
   })).filter((g) => g.skills.length > 0);
 
-  // Any ungrouped skills go into last category
+  // Any ungrouped skills go into last category (or create an "Other" group)
   const ungrouped = items.filter((s) => {
     const lower = s.name.toLowerCase();
     return !CATEGORIES.some((cat) => cat.keywords.some((kw) => lower.includes(kw)));
   });
   if (ungrouped.length > 0) {
-    const last = grouped[grouped.length - 1];
-    if (last) last.skills = [...last.skills, ...ungrouped];
+    if (grouped.length > 0) {
+      grouped[grouped.length - 1].skills = [...grouped[grouped.length - 1].skills, ...ungrouped];
+    } else {
+      // All skills ungrouped — show them under a generic group
+      grouped.push({
+        label: "Other Skills",
+        accent: "#6b7280",
+        accentBg: "rgba(107,114,128,0.07)",
+        accentBorder: "rgba(107,114,128,0.18)",
+        accentText: "#374151",
+        dot: "bg-gray-500",
+        keywords: [],
+        skills: ungrouped,
+      });
+    }
   }
 
   return (

@@ -11,8 +11,14 @@ interface Message {
 export default function MessagesAdminPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [selected, setSelected] = useState<Message | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const load = () => fetch("/api/admin/messages").then((r) => r.json()).then(setMessages);
+  const load = () => {
+    fetch("/api/admin/messages")
+      .then((r) => { if (!r.ok) throw new Error(); return r.json(); })
+      .then((data) => { setMessages(data); setLoading(false); })
+      .catch((err) => { console.error(err); setLoading(false); });
+  };
   useEffect(() => { load(); }, []);
 
   const markRead = async (msg: Message) => {
@@ -41,6 +47,11 @@ export default function MessagesAdminPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* List */}
         <div className="space-y-2">
+          {loading && (
+            <div className="space-y-2">
+              {[1,2,3].map(i => <div key={i} className="h-16 bg-gray-100 rounded-xl animate-pulse" />)}
+            </div>
+          )}
           {messages.map((msg) => (
             <button
               key={msg.id}

@@ -77,10 +77,10 @@ export async function getContent(): Promise<ContentMap> {
     const { db } = await import("@/lib/db");
     const items = await db.content.findMany();
     const map: ContentMap = {};
-    items.forEach((i) => (map[i.key] = i.value));
+    items.forEach((i: { key: string; value: string }) => (map[i.key] = i.value));
     return map;
-  } catch {
-    // Fallback to static DATA
+  } catch (err) {
+    console.error("getContent DB error:", err);
     return {
       hero_name: DATA.name,
       hero_greeting: "Hi, I'm",
@@ -102,7 +102,8 @@ export async function getWork(): Promise<WorkItem[]> {
   try {
     const { db } = await import("@/lib/db");
     return await db.experience.findMany({ orderBy: { order: "asc" } });
-  } catch {
+  } catch (err) {
+    console.error("getWork DB error:", err);
     return DATA.work.map((w, i) => ({
       id: String(i),
       company: w.company,
@@ -113,7 +114,7 @@ export async function getWork(): Promise<WorkItem[]> {
       startDate: w.start,
       endDate: w.end ?? "Present",
       description: w.description,
-      badges: [...(w.badges as string[])],
+      badges: [...w.badges].map(String),
       order: i,
     }));
   }
@@ -123,7 +124,8 @@ export async function getProjects(): Promise<ProjectItem[]> {
   try {
     const { db } = await import("@/lib/db");
     return await db.project.findMany({ orderBy: { order: "asc" } });
-  } catch {
+  } catch (err) {
+    console.error("getProjects DB error:", err);
     return DATA.projects.map((p, i) => ({
       id: String(i),
       title: p.title,
@@ -131,7 +133,7 @@ export async function getProjects(): Promise<ProjectItem[]> {
       description: p.description,
       imageUrl: p.image ?? "",
       videoUrl: p.video ?? "",
-      tags: [...(p.technologies as string[])],
+      tags: [...p.technologies].map(String),
       dates: p.dates,
       featured: true,
       order: i,
@@ -143,7 +145,8 @@ export async function getSkills(): Promise<SkillItem[]> {
   try {
     const { db } = await import("@/lib/db");
     return await db.skill.findMany({ orderBy: { order: "asc" } });
-  } catch {
+  } catch (err) {
+    console.error("getSkills DB error:", err);
     return DATA.skills.map((s, i) => ({ id: String(i), name: s.name, order: i }));
   }
 }
@@ -152,7 +155,8 @@ export async function getEducation(): Promise<EducationItem[]> {
   try {
     const { db } = await import("@/lib/db");
     return await db.education.findMany({ orderBy: { order: "asc" } });
-  } catch {
+  } catch (err) {
+    console.error("getEducation DB error:", err);
     return DATA.education.map((e, i) => ({
       id: String(i),
       school: e.school as string,
@@ -170,7 +174,8 @@ export async function getGallery(): Promise<GalleryItem[]> {
   try {
     const { db } = await import("@/lib/db");
     return await db.galleryItem.findMany({ orderBy: { order: "asc" } });
-  } catch {
+  } catch (err) {
+    console.error("getGallery DB error:", err);
     return DATA.gallery.map((g, i) => ({
       id: String(i),
       src: g.src,
@@ -185,7 +190,8 @@ export async function getTestimonials(): Promise<TestimonialItem[]> {
   try {
     const { db } = await import("@/lib/db");
     return await db.testimonial.findMany({ orderBy: { order: "asc" } });
-  } catch {
+  } catch (err) {
+    console.error("getTestimonials DB error:", err);
     return DATA.testimonials.map((t, i) => ({
       id: String(i),
       name: t.name,

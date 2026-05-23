@@ -53,14 +53,14 @@ export default function HackathonsSection({ items }: { items: GalleryItem[] }) {
               <div className="pointer-events-none absolute left-0 top-0 h-full w-20 z-10 bg-gradient-to-r from-background to-transparent" />
               <div className="pointer-events-none absolute right-0 top-0 h-full w-20 z-10 bg-gradient-to-l from-background to-transparent" />
               <div className="flex gap-3 w-max animate-marquee-ltr group">
-                {row1.map((item, i) => <PosterCard key={i} src={item.src} alt={item.alt} category={item.category} />)}
+                {row1.map((item, i) => <PosterCard key={`r1-${item.id}-${i}`} src={item.src} alt={item.alt} category={item.category} />)}
               </div>
             </div>
             <div className="relative w-full overflow-hidden">
               <div className="pointer-events-none absolute left-0 top-0 h-full w-20 z-10 bg-gradient-to-r from-background to-transparent" />
               <div className="pointer-events-none absolute right-0 top-0 h-full w-20 z-10 bg-gradient-to-l from-background to-transparent" />
               <div className="flex gap-3 w-max animate-marquee-rtl group">
-                {row2.map((item, i) => <PosterCard key={i} src={item.src} alt={item.alt} category={item.category} />)}
+                {row2.map((item, i) => <PosterCard key={`r2-${item.id}-${i}`} src={item.src} alt={item.alt} category={item.category} />)}
               </div>
             </div>
           </>

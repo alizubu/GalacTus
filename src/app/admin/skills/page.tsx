@@ -8,25 +8,36 @@ interface Skill { id: string; name: string; order: number; }
 export default function SkillsAdminPage() {
   const [skills, setSkills] = useState<Skill[]>([]);
   const [input, setInput] = useState("");
+  const [loadError, setLoadError] = useState(false);
 
-  const load = () => fetch("/api/admin/skills").then((r) => r.json()).then(setSkills);
+  const load = () =>
+    fetch("/api/admin/skills")
+      .then((r) => { if (!r.ok) throw new Error(); return r.json(); })
+      .then(setSkills)
+      .catch((err) => { console.error(err); setLoadError(true); });
   useEffect(() => { load(); }, []);
 
   const addSkill = async () => {
     const name = input.trim();
     if (!name) return;
-    await fetch("/api/admin/skills", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name }),
-    });
-    setInput("");
-    load();
+    try {
+      const res = await fetch("/api/admin/skills", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name }),
+      });
+      if (!res.ok) { console.error("Add skill failed"); return; }
+      setInput("");
+      load();
+    } catch (err) { console.error(err); }
   };
 
   const removeSkill = async (id: string) => {
-    await fetch(`/api/admin/skills/${id}`, { method: "DELETE" });
-    load();
+    try {
+      const res = await fetch(`/api/admin/skills/${id}`, { method: "DELETE" });
+      if (!res.ok) { console.error("Delete skill failed"); return; }
+      load();
+    } catch (err) { console.error(err); }
   };
 
   const handleKey = (e: KeyboardEvent<HTMLInputElement>) => {

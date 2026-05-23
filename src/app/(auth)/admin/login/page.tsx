@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
 import { Loader2, Eye, EyeOff, ShieldCheck, AlertCircle } from "lucide-react";
 
-export const dynamic = "force-dynamic";
+// Note: force-dynamic has no effect in Client Components — removed
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -36,8 +36,8 @@ export default function AdminLoginPage() {
     if (res?.error) {
       setError("Invalid email or password.");
     } else {
+      // Only push — refresh() on the old route is a race condition, not needed
       router.push("/admin");
-      router.refresh();
     }
   };
 

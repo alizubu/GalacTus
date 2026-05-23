@@ -46,7 +46,7 @@ export default async function Page() {
   const description = content.hero_description ?? "";
   const avatarUrl = content.hero_avatar_url ?? "/assets/images/shelvey.jpeg";
   const bio = content.about_bio ?? "";
-  const initials = name.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase();
+  const initials = name.split(" ").filter(Boolean).map((n: string) => n[0]).join("").slice(0, 2).toUpperCase();
 
   return (
     <main className="min-h-dvh flex flex-col gap-10 sm:gap-14 relative">

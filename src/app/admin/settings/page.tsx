@@ -21,7 +21,10 @@ export default function SettingsAdminPage() {
   const [pwMsg, setPwMsg] = useState("");
 
   useEffect(() => {
-    fetch("/api/admin/content").then((r) => r.json()).then((d) => { setValues(d); setLoading(false); });
+    fetch("/api/admin/content")
+      .then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
+      .then((d) => { setValues(d); setLoading(false); })
+      .catch((err) => { console.error(err); setLoading(false); });
   }, []);
 
   const handleSave = async () => {
@@ -82,17 +85,19 @@ export default function SettingsAdminPage() {
               { key: "next", label: "New Password" },
               { key: "confirm", label: "Confirm New Password" },
             ].map((f) => (
-              <div key={f.key} className="relative">
-                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">{f.label}</label>
-                <input
-                  type={showPw ? "text" : "password"}
-                  value={pw[f.key as keyof typeof pw]}
-                  onChange={(e) => setPw((p) => ({ ...p, [f.key]: e.target.value }))}
-                  className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-gray-400 pr-10"
-                />
-                <button type="button" onClick={() => setShowPw((v) => !v)} className="absolute right-3 top-8 text-gray-400">
-                  {showPw ? <EyeOff size={14} /> : <Eye size={14} />}
-                </button>
+              <div key={f.key} className="space-y-1.5">
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider">{f.label}</label>
+                <div className="relative">
+                  <input
+                    type={showPw ? "text" : "password"}
+                    value={pw[f.key as keyof typeof pw]}
+                    onChange={(e) => setPw((p) => ({ ...p, [f.key]: e.target.value }))}
+                    className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-gray-400 pr-10"
+                  />
+                  <button type="button" onClick={() => setShowPw((v) => !v)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                    {showPw ? <EyeOff size={14} /> : <Eye size={14} />}
+                  </button>
+                </div>
               </div>
             ))}
             {pwMsg && <p className={`text-xs ${pwMsg.includes("success") ? "text-green-600" : "text-red-500"}`}>{pwMsg}</p>}
