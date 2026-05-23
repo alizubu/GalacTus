@@ -1,23 +1,32 @@
 'use client';
 
-import {
-  CursorProvider,
-  Cursor,
-} from '@/components/animate-ui/primitives/animate/cursor';
+import { useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
+
+// CursorProvider uses window/document — must be client-only, no SSR
+const CursorProvider = dynamic(
+  () => import('@/components/animate-ui/primitives/animate/cursor').then((m) => m.CursorProvider),
+  { ssr: false }
+);
+const Cursor = dynamic(
+  () => import('@/components/animate-ui/primitives/animate/cursor').then((m) => m.Cursor),
+  { ssr: false }
+);
 
 export default function CustomCursor() {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+  if (!mounted) return null;
+
   return (
     <CursorProvider global>
-      {/* Fast-responding arrow cursor */}
       <Cursor>
         <svg
           width="22"
           height="22"
           viewBox="0 0 40 40"
           xmlns="http://www.w3.org/2000/svg"
-          style={{
-            filter: 'drop-shadow(0 1px 3px rgba(0,0,0,0.35))',
-          }}
+          style={{ filter: 'drop-shadow(0 1px 3px rgba(0,0,0,0.35))' }}
         >
           <path
             fill="white"

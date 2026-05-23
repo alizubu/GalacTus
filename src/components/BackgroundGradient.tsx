@@ -1,12 +1,20 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
-import { BubbleBackground } from "@/components/animate-ui/backgrounds/bubble";
+
+// BubbleBackground uses useLayoutEffect + ResizeObserver — must be client-only
+const BubbleBackground = dynamic(
+  () => import("@/components/animate-ui/backgrounds/bubble").then((m) => m.BubbleBackground),
+  { ssr: false }
+);
 
 export default function BackgroundGradient() {
   const [isDark, setIsDark] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     const check = () => setIsDark(document.documentElement.classList.contains("dark"));
     check();
     const observer = new MutationObserver(check);
@@ -14,8 +22,9 @@ export default function BackgroundGradient() {
     return () => observer.disconnect();
   }, []);
 
+  if (!mounted) return null;
+
   if (isDark) {
-    // Dark mode — rich vivid bubbles, higher opacity
     return (
       <BubbleBackground
         interactive
@@ -37,7 +46,6 @@ export default function BackgroundGradient() {
     );
   }
 
-  // Light mode — very subtle, pastel tones, low opacity so text stays crisp
   return (
     <BubbleBackground
       interactive
@@ -47,12 +55,12 @@ export default function BackgroundGradient() {
         opacity: 0.28,
       }}
       colors={{
-        first:  "199,210,254",   // indigo-200
-        second: "221,214,254",   // violet-200
-        third:  "165,243,252",   // cyan-200
-        fourth: "191,219,254",   // blue-200
-        fifth:  "251,207,232",   // pink-200
-        sixth:  "167,243,208",   // emerald-200
+        first:  "199,210,254",
+        second: "221,214,254",
+        third:  "165,243,252",
+        fourth: "191,219,254",
+        fifth:  "251,207,232",
+        sixth:  "167,243,208",
       }}
       transition={{ stiffness: 60, damping: 30 }}
     />
