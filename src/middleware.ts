@@ -1,10 +1,12 @@
 import { auth } from "@/lib/auth";
 import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
-export default auth((req) => {
-  const isAdminRoute = req.nextUrl.pathname.startsWith("/admin");
-  const isLoginPage = req.nextUrl.pathname === "/admin/login";
-  const isAuthenticated = !!req.auth;
+export default auth((req: NextRequest & { auth: unknown }) => {
+  const { pathname } = req.nextUrl;
+  const isAdminRoute = pathname.startsWith("/admin");
+  const isLoginPage = pathname === "/admin/login";
+  const isAuthenticated = !!(req as { auth: unknown }).auth;
 
   if (isAdminRoute && !isLoginPage && !isAuthenticated) {
     return NextResponse.redirect(new URL("/admin/login", req.url));
