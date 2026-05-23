@@ -33,6 +33,11 @@ export default function Page() {
                 delay={BLUR_FADE_DELAY}
                 text={DATA.description}
               />
+              <BlurFadeText
+                className="text-muted-foreground/80 max-w-[600px] text-sm md:text-base"
+                delay={BLUR_FADE_DELAY * 2}
+                text="5+ years driving real results for real businesses. No fake promises — only data-backed strategies and measurable growth."
+              />
             </div>
             <BlurFade delay={BLUR_FADE_DELAY} className="order-1 md:order-2">
               <Avatar className="size-24 md:size-32 border rounded-full shadow-lg ring-4 ring-muted">
@@ -116,7 +121,6 @@ export default function Page() {
             {DATA.skills.map((skill) => (
               <StaggerItem key={skill.name}>
                 <div className="border bg-background border-border ring-2 ring-border/20 rounded-xl h-8 w-fit px-4 flex items-center gap-2">
-                  {skill.icon && <skill.icon className="size-4 rounded overflow-hidden object-contain" />}
                   <span className="text-foreground text-sm font-medium">{skill.name}</span>
                 </div>
               </StaggerItem>
