@@ -28,7 +28,7 @@ const contactInfo = [
 
 export default function ContactSection() {
   return (
-    <div className="border rounded-xl relative overflow-hidden">
+    <div className="border rounded-xl relative mt-6">
       {/* Flickering grid header strip */}
       <div className="absolute -top-4 border bg-primary z-10 rounded-xl px-4 py-1 left-1/2 -translate-x-1/2 whitespace-nowrap">
         <span className="text-background text-sm font-medium">Contact</span>
