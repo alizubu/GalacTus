@@ -111,6 +111,19 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+/* ── Mobile optimizations ── */
+@media (max-width: 640px) {
+  /* Ensure tap targets are at least 44px */
+  button, a, [role="button"] {
+    min-height: 36px;
+  }
+  /* Prevent text overflow on small screens */
+  h1, h2, h3 {
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+}
+
 /* ── Custom cursor: hide default — handled by animate-ui CursorProvider ── */
 
 /* ── Background gradient blob animations ── */

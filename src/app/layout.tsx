@@ -88,8 +88,7 @@ export default function RootLayout({
                 }}
               />
             </div>
-            <div className="relative z-10 max-w-2xl mx-auto py-12 pb-24 sm:py-24 px-3 sm:px-4
-                            [&>main]:rounded-2xl">
+            <div className="relative z-10 max-w-2xl mx-auto py-10 pb-28 sm:py-20 sm:pb-28 px-4 sm:px-5">
               {children}
             </div>
             <Navbar />

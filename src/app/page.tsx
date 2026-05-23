@@ -20,34 +20,35 @@ const BLUR_FADE_DELAY = 0.04;
 
 export default function Page() {
   return (
-    <main className="min-h-dvh flex flex-col gap-14 relative">
+    <main className="min-h-dvh flex flex-col gap-10 sm:gap-14 relative">
       <section id="hero">
-        <div className="mx-auto w-full max-w-2xl space-y-8">
-          <div className="gap-2 gap-y-6 flex flex-col md:flex-row justify-between">
-            <div className="gap-2 flex flex-col order-2 md:order-1">
-              <BlurFadeText
-                delay={BLUR_FADE_DELAY}
-                className="text-3xl font-semibold tracking-tighter sm:text-4xl lg:text-5xl"
-                yOffset={8}
-                text={`Hi, I'm ${DATA.name.split(" ")[0]}`}
-              />
-              <BlurFadeText
-                className="text-muted-foreground max-w-[600px] md:text-lg lg:text-xl"
-                delay={BLUR_FADE_DELAY}
-                text={DATA.description}
-              />
-              <BlurFadeText
-                className="text-muted-foreground/80 max-w-[600px] text-sm md:text-base"
-                delay={BLUR_FADE_DELAY * 2}
-                text="5+ years driving real results for real businesses. No fake promises — only data-backed strategies and measurable growth."
-              />
-            </div>
-            <BlurFade delay={BLUR_FADE_DELAY} className="order-1 md:order-2">
-              <Avatar className="size-24 md:size-32 border rounded-full shadow-lg ring-4 ring-muted">
+        <div className="mx-auto w-full space-y-6">
+          <div className="gap-4 flex flex-col sm:flex-row sm:items-start justify-between">
+            {/* Avatar — top on mobile */}
+            <BlurFade delay={BLUR_FADE_DELAY} className="flex sm:order-2 sm:ml-4">
+              <Avatar className="size-20 sm:size-28 border rounded-full shadow-lg ring-2 ring-muted shrink-0">
                 <AvatarImage alt={DATA.name} src={DATA.avatarUrl} />
                 <AvatarFallback>{DATA.initials}</AvatarFallback>
               </Avatar>
             </BlurFade>
+            <div className="gap-2 flex flex-col sm:order-1 flex-1 min-w-0">
+              <BlurFadeText
+                delay={BLUR_FADE_DELAY}
+                className="text-3xl font-bold tracking-tighter sm:text-4xl lg:text-5xl"
+                yOffset={8}
+                text={`Hi, I'm ${DATA.name.split(" ")[0]}`}
+              />
+              <BlurFadeText
+                className="text-muted-foreground text-base sm:text-lg"
+                delay={BLUR_FADE_DELAY}
+                text={DATA.description}
+              />
+              <BlurFadeText
+                className="text-muted-foreground/70 text-sm"
+                delay={BLUR_FADE_DELAY * 2}
+                text="5+ years driving real results for real businesses. No fake promises — only data-backed strategies and measurable growth."
+              />
+            </div>
           </div>
         </div>
       </section>
@@ -73,7 +74,7 @@ export default function Page() {
       <section id="education">
         <div className="flex min-h-0 flex-col gap-y-5">
           <SectionTitle title="Education" subtitle="Academic Background" />
-          <StaggerContainer className="flex flex-col gap-3" staggerDelay={0.1}>
+          <StaggerContainer className="flex flex-col gap-2.5 sm:gap-3" staggerDelay={0.1}>
             {DATA.education.map((edu) => {
               const school = edu.school as string;
               const degree = edu.degree as string;
@@ -87,7 +88,7 @@ export default function Page() {
                     href={href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-x-4 p-4 rounded-2xl border bg-card/50
+                    className="flex items-center gap-x-3 p-3 sm:p-4 rounded-2xl border bg-card/50
                                hover:bg-card hover:shadow-sm transition-all duration-300 group"
                   >
                     {logoUrl ? (
