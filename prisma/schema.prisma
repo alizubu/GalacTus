@@ -1,0 +1,89 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Content {
+  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  key   String @unique
+  value String
+}
+
+model Experience {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  company     String
+  href        String   @default("#")
+  logo        String   @default("")
+  title       String
+  location    String   @default("")
+  startDate   String
+  endDate     String
+  description String
+  badges      String[]
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Project {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  href        String   @default("#")
+  description String
+  imageUrl    String   @default("")
+  videoUrl    String   @default("")
+  tags        String[]
+  dates       String   @default("")
+  featured    Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Skill {
+  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  name  String
+  order Int    @default(0)
+}
+
+model Education {
+  id        String @id @default(auto()) @map("_id") @db.ObjectId
+  school    String
+  href      String @default("#")
+  logo      String @default("")
+  degree    String
+  startYear String
+  endYear   String
+  order     Int    @default(0)
+}
+
+model GalleryItem {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  src      String
+  alt      String
+  category String @default("")
+  order    Int    @default(0)
+}
+
+model Testimonial {
+  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  name  String
+  role  String @default("")
+  quote String
+  stars Int    @default(5)
+  order Int    @default(0)
+}
+
+model ContactMessage {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  email     String
+  subject   String
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
