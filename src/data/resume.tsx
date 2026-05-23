@@ -313,6 +313,56 @@ export const DATA = {
         "https://pub-83c5db439b40468498f97946200806f7.r2.dev/automatic-chat.mp4",
     },
   ],
+  testimonials: [
+    {
+      name: "Sarah Mitchell",
+      role: "CTO, NovaTech Solutions",
+      avatar: "",
+      stars: 5,
+      quote:
+        "Working with Dillion was an absolute pleasure. He delivered a production-ready platform weeks ahead of schedule, and the code quality was exceptional. Our team was blown away by the attention to detail.",
+    },
+    {
+      name: "James Okafor",
+      role: "Founder, Launchpad AI",
+      avatar: "",
+      stars: 5,
+      quote:
+        "Dillion took our vague idea and turned it into a polished, scalable product. His ability to translate business requirements into clean technical solutions is rare. We've already hired him for our next project.",
+    },
+    {
+      name: "Priya Sharma",
+      role: "Product Manager, Finova",
+      avatar: "",
+      stars: 5,
+      quote:
+        "From day one, Dillion communicated clearly, hit every milestone, and proactively flagged potential issues before they became problems. Exactly the kind of engineer you want on a critical project.",
+    },
+    {
+      name: "Lucas Fernandez",
+      role: "CEO, Stackbloom",
+      avatar: "",
+      stars: 5,
+      quote:
+        "The performance improvements Dillion made to our backend reduced our API response times by over 60%. He didn't just fix what we asked — he found and solved problems we didn't even know we had.",
+    },
+    {
+      name: "Emily Chen",
+      role: "Lead Designer, Pixel & Co.",
+      avatar: "",
+      stars: 5,
+      quote:
+        "I've worked with many developers who struggle to implement designs faithfully. Dillion is the exception — pixel-perfect execution every time, with thoughtful suggestions that actually improved the UX.",
+    },
+    {
+      name: "Marcus Webb",
+      role: "Engineering Manager, CloudBase",
+      avatar: "",
+      stars: 5,
+      quote:
+        "Dillion integrated seamlessly with our existing team. His code reviews were insightful, his PRs were clean, and he mentored two junior engineers along the way. A true force multiplier.",
+    },
+  ],
   hackathons: [
     {
       title: "Hack Western 5",

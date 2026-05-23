@@ -9,6 +9,7 @@ import ContactSection from "@/components/section/contact-section";
 import HackathonsSection from "@/components/section/hackathons-section";
 import ProjectsSection from "@/components/section/projects-section";
 import WorkSection from "@/components/section/work-section";
+import TestimonialsSection from "@/components/section/testimonials-section";
 import { ArrowUpRight } from "lucide-react";
 import { FadeUp, WordReveal, BlurClear, StaggerContainer, StaggerItem } from "@/components/AnimatedText";
 
@@ -131,6 +132,11 @@ export default function Page() {
       <section id="hackathons">
         <FadeUp delay={0.05}>
           <HackathonsSection />
+        </FadeUp>
+      </section>
+      <section id="testimonials">
+        <FadeUp delay={0.05}>
+          <TestimonialsSection />
         </FadeUp>
       </section>
       <section id="contact">
