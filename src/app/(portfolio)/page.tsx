@@ -25,7 +25,7 @@ import {
 
 const BLUR_FADE_DELAY = 0.04;
 
-export const revalidate = 60; // ISR — revalidate every 60s
+export const dynamic = "force-dynamic"; // base64 images in DB make ISR payload too large
 
 export default async function Page() {
   const [content, work, projects, skills, education, gallery, testimonials] =
