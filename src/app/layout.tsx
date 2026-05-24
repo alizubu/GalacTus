@@ -8,6 +8,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { FlickeringGrid } from "@/components/magicui/flickering-grid";
 import BackgroundGradient from "@/components/BackgroundGradient";
+import { headers } from "next/headers";
 
 const geist = Geist({
   subsets: ["latin"],
@@ -57,11 +58,16 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Detect admin routes to skip portfolio wrapper
+  const headersList = await headers();
+  const pathname = headersList.get("x-invoke-path") ?? headersList.get("x-url") ?? "";
+  const isAdmin = pathname.startsWith("/admin");
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -74,22 +80,30 @@ export default function RootLayout({
       >
         <ThemeProvider attribute="class" defaultTheme="light">
           <TooltipProvider delayDuration={0}>
-            <BackgroundGradient />
-            <div className="absolute inset-0 top-0 left-0 right-0 h-[100px] overflow-hidden z-0">
-              <FlickeringGrid
-                className="h-full w-full"
-                squareSize={2}
-                gridGap={2}
-                style={{
-                  maskImage: "linear-gradient(to bottom, black, transparent)",
-                  WebkitMaskImage: "linear-gradient(to bottom, black, transparent)",
-                }}
-              />
-            </div>
-            <div className="relative z-10 max-w-2xl mx-auto py-10 pb-28 sm:py-20 sm:pb-28 px-4 sm:px-5">
-              {children}
-            </div>
-            <Navbar />
+            {isAdmin ? (
+              // Admin: render full-width, no constraints
+              <>{children}</>
+            ) : (
+              // Portfolio: constrained centered layout
+              <>
+                <BackgroundGradient />
+                <div className="absolute inset-0 top-0 left-0 right-0 h-[100px] overflow-hidden z-0">
+                  <FlickeringGrid
+                    className="h-full w-full"
+                    squareSize={2}
+                    gridGap={2}
+                    style={{
+                      maskImage: "linear-gradient(to bottom, black, transparent)",
+                      WebkitMaskImage: "linear-gradient(to bottom, black, transparent)",
+                    }}
+                  />
+                </div>
+                <div className="relative z-10 max-w-2xl mx-auto py-10 pb-28 sm:py-20 sm:pb-28 px-4 sm:px-5">
+                  {children}
+                </div>
+                <Navbar />
+              </>
+            )}
           </TooltipProvider>
         </ThemeProvider>
       </body>
