@@ -124,7 +124,6 @@
   }
 }
 
-/* ── Custom cursor: hide default — handled by animate-ui CursorProvider ── */
 
 /* ── Background gradient blob animations ── */
 @keyframes blob-float1 {
