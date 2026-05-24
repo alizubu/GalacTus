@@ -9,6 +9,7 @@ interface Experience {
   id: string; company: string; href: string; logo: string;
   title: string; location: string; startDate: string;
   endDate: string; description: string; badges: string[];
+  [key: string]: unknown;
 }
 
 const empty: Omit<Experience, "id"> = {

@@ -7,6 +7,7 @@ import DraggableList from "@/components/admin/DraggableList";
 interface Education {
   id: string; school: string; href: string; logo: string;
   degree: string; startYear: string; endYear: string;
+  [key: string]: unknown;
 }
 
 const empty: Omit<Education, "id"> = {
