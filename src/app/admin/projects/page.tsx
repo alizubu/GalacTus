@@ -2,10 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { Plus, Pencil, Trash2, X, Check } from "lucide-react";
+import ImageUpload from "@/components/admin/ImageUpload";
 
 interface Project {
   id: string; title: string; href: string; description: string;
   imageUrl: string; videoUrl: string; tags: string[]; dates: string; featured: boolean;
+  [key: string]: unknown;
 }
 
 const empty: Omit<Project, "id"> = {
@@ -106,8 +108,7 @@ export default function ProjectsAdminPage() {
                 { key: "title", label: "Title" },
                 { key: "href", label: "Live URL" },
                 { key: "dates", label: "Date Range (e.g. 2 Weeks)" },
-                { key: "imageUrl", label: "Image URL" },
-                { key: "videoUrl", label: "Video URL" },
+                { key: "videoUrl", label: "Video URL (optional)" },
               ].map((f) => (
                 <div key={f.key}>
                   <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">{f.label}</label>
@@ -119,6 +120,12 @@ export default function ProjectsAdminPage() {
                   />
                 </div>
               ))}
+              {/* Image upload */}
+              <ImageUpload
+                label="Project Image"
+                value={editing.imageUrl ?? ""}
+                onChange={(url) => setEditing((p) => ({ ...p, imageUrl: url }))}
+              />
               <div>
                 <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Description</label>
                 <textarea rows={4} value={editing.description ?? ""} onChange={(e) => setEditing((p) => ({ ...p, description: e.target.value }))} className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-gray-400 resize-none" />

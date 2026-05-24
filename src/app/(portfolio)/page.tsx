@@ -3,7 +3,6 @@ import BlurFade from "@/components/magicui/blur-fade";
 import BlurFadeText from "@/components/magicui/blur-fade-text";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
-import Markdown from "react-markdown";
 import ContactSection from "@/components/section/contact-section";
 import GallerySection from "@/components/section/gallery-section";
 import ProjectsSection from "@/components/section/projects-section";
@@ -88,9 +87,10 @@ export default async function Page() {
         <div className="flex min-h-0 flex-col gap-y-5">
           <SectionTitle title="About" subtitle="Who I Am" />
           <FadeUp delay={0.1}>
-            <div className="prose max-w-full font-sans leading-relaxed text-foreground/80 dark:prose-invert [&>p]:text-justify">
-              <Markdown>{bio}</Markdown>
-            </div>
+            <div
+              className="prose max-w-full font-sans leading-relaxed text-foreground/80 dark:prose-invert [&>p]:text-justify"
+              dangerouslySetInnerHTML={{ __html: bio }}
+            />
           </FadeUp>
           <AboutStats />
         </div>

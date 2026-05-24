@@ -24,19 +24,9 @@ export function SectionTitle({
   return (
     <div
       ref={ref}
-      className={`flex flex-col gap-1.5 ${align === "center" ? "items-center text-center" : "items-start"} ${className}`}
+      className={`flex flex-col gap-1 ${align === "center" ? "items-center text-center" : "items-start"} ${className}`}
     >
-      {/* Accent line + label — removed subtitle text as requested */}
-      <motion.div
-        initial={{ opacity: 0, x: -12 }}
-        animate={isInView ? { opacity: 1, x: 0 } : {}}
-        transition={{ duration: 0.4, ease: "easeOut" }}
-        className="flex items-center gap-2.5"
-      >
-        <span className="block h-px w-6 rounded-full bg-primary/40" aria-hidden />
-      </motion.div>
-
-      {/* Main title — word by word */}
+      {/* Main title only — accent line removed */}
       <h2
         className="text-2xl font-bold tracking-tight text-foreground leading-tight sm:text-3xl"
         style={{ overflow: "hidden" }}
