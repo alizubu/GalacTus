@@ -14,47 +14,22 @@ async function getSession() {
   }
 }
 
-export default async function AdminLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const session = await getSession();
-
-  if (!session) {
-    redirect("/admin/login");
-  }
+  if (!session) redirect("/admin/login");
 
   return (
-    <div
-      suppressHydrationWarning
-      style={{
-        minHeight: "100vh",
-        display: "flex",
-        background: "#f0f0f0",
-        colorScheme: "light",
-      }}
-    >
+    <div className="flex h-screen overflow-hidden bg-[#f5f6fa]" style={{ colorScheme: "light" }}>
       <AdminSidebar />
-      <div
-        style={{
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          minWidth: 0,
-          overflow: "hidden",
-        }}
-      >
+
+      {/* Main area */}
+      <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
         <AdminTopbar />
-        <main
-          style={{
-            flex: 1,
-            overflow: "auto",
-            padding: "32px 64px",
-            background: "#f0f0f0",
-          }}
-        >
-          {children}
+        <main className="flex-1 overflow-y-auto">
+          {/* Centered content with generous padding */}
+          <div className="w-full max-w-screen-xl mx-auto px-6 py-8 lg:px-10 lg:py-10">
+            {children}
+          </div>
         </main>
       </div>
     </div>
