@@ -8,7 +8,6 @@ const TEXT_FIELDS = [
   { key: "hero_name",        label: "Full Name",          placeholder: "Shelvey Dias" },
   { key: "hero_greeting",    label: "Greeting",           placeholder: "Hi, I'm" },
   { key: "hero_tagline",     label: "Tagline / Role",     placeholder: "Corporate Marketing Strategist" },
-  { key: "hero_description", label: "Short Description",  placeholder: "5+ years driving real results...", multiline: true },
 ];
 
 function AvatarUpload({
@@ -86,7 +85,7 @@ function AvatarUpload({
               <><Upload size={14} />Upload New Photo</>
             )}
           </button>
-          <p className="text-[11px] text-gray-400">JPG, PNG, WebP · Max 2MB</p>
+          <p className="text-[11px] text-gray-400">JPG, JPEG, PNG, SVG · Max 5MB</p>
           {error && <p className="text-xs text-red-500">{error}</p>}
 
           {/* Manual URL fallback */}
@@ -106,7 +105,7 @@ function AvatarUpload({
       <input
         ref={inputRef}
         type="file"
-        accept="image/jpeg,image/png,image/webp,image/gif"
+        accept="image/jpeg,image/png,image/svg+xml"
         className="hidden"
         onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); e.target.value = ""; }}
       />

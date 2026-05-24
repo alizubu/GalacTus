@@ -15,15 +15,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
 
-    // Validate type
-    const allowed = ["image/jpeg", "image/png", "image/webp", "image/gif", "image/svg+xml"];
+    // Validate type — JPG, JPEG, PNG, SVG only
+    const allowed = ["image/jpeg", "image/png", "image/svg+xml"];
     if (!allowed.includes(file.type)) {
-      return NextResponse.json({ error: "Invalid file type. Use JPG, PNG, WebP, GIF or SVG." }, { status: 400 });
+      return NextResponse.json({ error: "Invalid file type. Use JPG, JPEG, PNG, or SVG." }, { status: 400 });
     }
 
-    // Validate size (2MB max)
-    if (file.size > 2 * 1024 * 1024) {
-      return NextResponse.json({ error: "File too large. Max 2MB." }, { status: 400 });
+    // Validate size (5MB max)
+    if (file.size > 5 * 1024 * 1024) {
+      return NextResponse.json({ error: "File too large. Max 5MB." }, { status: 400 });
     }
 
     const bytes = await file.arrayBuffer();

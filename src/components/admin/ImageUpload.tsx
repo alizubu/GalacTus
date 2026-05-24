@@ -87,7 +87,7 @@ export default function ImageUpload({ value, onChange, label = "Image" }: Props)
             <Upload size={18} className="mx-auto mb-1 text-gray-300" />
             Drag & drop or click to upload
             <br />
-            <span className="text-[10px]">JPG, PNG, WebP, SVG · max 2MB</span>
+            <span className="text-[10px]">JPG, JPEG, PNG, SVG · max 5MB</span>
           </div>
         )}
       </div>
@@ -97,7 +97,7 @@ export default function ImageUpload({ value, onChange, label = "Image" }: Props)
       <input
         ref={inputRef}
         type="file"
-        accept="image/*"
+        accept="image/jpeg,image/png,image/svg+xml"
         className="hidden"
         onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); }}
       />

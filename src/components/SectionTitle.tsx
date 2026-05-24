@@ -26,20 +26,14 @@ export function SectionTitle({
       ref={ref}
       className={`flex flex-col gap-1.5 ${align === "center" ? "items-center text-center" : "items-start"} ${className}`}
     >
-      {/* Accent line + label */}
+      {/* Accent line + label — removed subtitle text as requested */}
       <motion.div
         initial={{ opacity: 0, x: -12 }}
         animate={isInView ? { opacity: 1, x: 0 } : {}}
         transition={{ duration: 0.4, ease: "easeOut" }}
         className="flex items-center gap-2.5"
       >
-        <span
-          className="block h-px w-6 rounded-full bg-primary/40"
-          aria-hidden
-        />
-        <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground/70">
-          {subtitle ?? title}
-        </span>
+        <span className="block h-px w-6 rounded-full bg-primary/40" aria-hidden />
       </motion.div>
 
       {/* Main title — word by word */}

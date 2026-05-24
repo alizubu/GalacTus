@@ -50,7 +50,7 @@ export default async function AdminLayout({
           style={{
             flex: 1,
             overflow: "auto",
-            padding: "24px",
+            padding: "32px 64px",
             background: "#f0f0f0",
           }}
         >
