@@ -45,7 +45,7 @@ function SidebarContent({ pathname, onClose }: { pathname: string; onClose?: () 
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 py-4 px-3 space-y-0.5 overflow-y-auto">
+      <nav className="flex-1 py-4 px-3 space-y-0.5 overflow-y-auto admin-sidebar-scroll">
         <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-white/20 px-2 mb-2">Content</p>
         {nav.slice(0, 7).map((item) => {
           const active = item.exact
