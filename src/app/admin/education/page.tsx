@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Plus, Pencil, Trash2, X, Check } from "lucide-react";
 import DraggableList from "@/components/admin/DraggableList";
+import ImageUpload from "@/components/admin/ImageUpload";
 
 interface Education {
   id: string; school: string; href: string; logo: string;
@@ -61,7 +62,6 @@ export default function EducationAdminPage() {
     { key: "startYear", label: "Start Year" },
     { key: "endYear", label: "End Year (or Present)" },
     { key: "href", label: "Website URL" },
-    { key: "logo", label: "Logo URL" },
   ];
 
   return (
@@ -116,6 +116,11 @@ export default function EducationAdminPage() {
                   <input type="text" value={(editing as Record<string, string>)[f.key] ?? ""} onChange={(e) => setEditing((p) => ({ ...p, [f.key]: e.target.value }))} className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-gray-400" />
                 </div>
               ))}
+              <ImageUpload
+                label="Institution Logo"
+                value={editing.logo ?? ""}
+                onChange={(url) => setEditing((p) => ({ ...p, logo: url }))}
+              />
             </div>
             <div className="flex justify-end gap-3 p-6 border-t">
               <button onClick={closeEdit} className="px-4 py-2 text-sm text-gray-600">Cancel</button>
