@@ -28,7 +28,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       {/* Main: takes all remaining width */}
       <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0, overflow: "hidden" }}>
         <AdminTopbar />
-        <main style={{ flex: 1, overflowY: "auto", padding: "36px 48px" }} className="admin-scroll">
+        <main style={{ flex: 1, overflowY: "auto", padding: "48px 60px" }} className="admin-scroll">
           {children}
         </main>
       </div>

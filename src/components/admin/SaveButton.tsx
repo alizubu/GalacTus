@@ -27,23 +27,22 @@ export default function SaveButton({ onSave, label = "Save Changes" }: Props) {
     <button
       onClick={handleClick}
       disabled={state !== "idle"}
-      className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 disabled:opacity-60"
+      className="flex items-center gap-2.5 px-6 py-3 rounded-xl text-sm font-semibold
+                 transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed
+                 hover:scale-[1.02] active:scale-[0.98]"
       style={{
-        background:
-          state === "saved"
-            ? "linear-gradient(135deg, #22c55e, #16a34a)"
-            : "linear-gradient(135deg, #1a1a1a, #2d2d2d)",
+        background: state === "saved"
+          ? "linear-gradient(135deg, #22c55e, #16a34a)"
+          : "linear-gradient(135deg, #111827, #1f2937)",
         color: "white",
-        boxShadow:
-          state === "saved"
-            ? "0 4px 16px rgba(34,197,94,0.3)"
-            : "0 4px 16px rgba(0,0,0,0.15)",
-        border: "1px solid rgba(255,255,255,0.08)",
+        boxShadow: state === "saved"
+          ? "0 8px 24px rgba(34,197,94,0.25), 0 2px 8px rgba(34,197,94,0.15)"
+          : "0 8px 24px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08)",
       }}
     >
-      {state === "saving" && <Loader2 size={14} className="animate-spin" />}
-      {state === "saved" && <Check size={14} />}
-      {state === "idle" && <Save size={14} />}
+      {state === "saving" && <Loader2 size={15} className="animate-spin" />}
+      {state === "saved" && <Check size={15} />}
+      {state === "idle" && <Save size={15} />}
       {state === "saving" ? "Saving..." : state === "saved" ? "Saved!" : label}
     </button>
   );
