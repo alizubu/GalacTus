@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { requireAdmin } from "@/lib/admin-guard";
 import { revalidatePath } from "next/cache";
+import { uploadToCloudinary, isBase64DataUrl } from "@/lib/cloudinary";
 
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const guard = await requireAdmin();
@@ -10,12 +11,27 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     const { id } = await params;
     const { company, href, logo, title, location, startDate, endDate, description, badges } =
       await req.json();
+
+    // Upload base64 logo to Cloudinary if needed
+    let resolvedLogo = logo;
+    if (logo !== undefined && isBase64DataUrl(String(logo))) {
+      try {
+        resolvedLogo = await uploadToCloudinary(String(logo), "portfolio/experience");
+      } catch (uploadErr) {
+        console.error("Cloudinary upload error (experience logo):", uploadErr);
+        return NextResponse.json(
+          { error: "Image upload failed. Check your Cloudinary credentials and try again." },
+          { status: 502 }
+        );
+      }
+    }
+
     const item = await db.experience.update({
       where: { id },
       data: {
         ...(company !== undefined && { company: String(company) }),
         ...(href !== undefined && { href: String(href) }),
-        ...(logo !== undefined && { logo: String(logo) }),
+        ...(resolvedLogo !== undefined && { logo: String(resolvedLogo) }),
         ...(title !== undefined && { title: String(title) }),
         ...(location !== undefined && { location: String(location) }),
         ...(startDate !== undefined && { startDate: String(startDate) }),

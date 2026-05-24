@@ -15,20 +15,6 @@ const empty: Omit<Education, "id"> = {
   school: "", href: "#", logo: "", degree: "", startYear: "", endYear: "",
 };
 
-// Save base64 logo to content table to avoid large JSON bodies
-async function saveLogoToContent(key: string, base64: string): Promise<boolean> {
-  try {
-    const res = await fetch("/api/admin/content", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ [key]: base64 }),
-    });
-    return res.ok;
-  } catch {
-    return false;
-  }
-}
-
 export default function EducationAdminPage() {
   const [items, setItems] = useState<Education[]>([]);
   const [editing, setEditing] = useState<Partial<Education> | null>(null);
@@ -49,35 +35,19 @@ export default function EducationAdminPage() {
     setSaving(true);
     setSaveError("");
     try {
-      let logoValue = editing.logo ?? "";
-
-      // If logo is a base64 data URL, save it separately to avoid large request bodies
-      if (logoValue.startsWith("data:")) {
-        const contentKey = `edu_logo_${editing.id ?? "new_" + Date.now()}`;
-        const ok = await saveLogoToContent(contentKey, logoValue);
-        if (!ok) {
-          setSaveError("Failed to upload logo. Please try again.");
-          setSaving(false);
-          return;
-        }
-        // Store a small reference key instead of the full base64
-        logoValue = `__content__${contentKey}`;
-      }
-
-      const dataToSend = { ...editing, logo: logoValue };
+      // Logo is now either a Cloudinary URL (from ImageUpload) or a plain URL — no base64 indirection needed
       const method = isNew ? "POST" : "PUT";
       const url = isNew ? "/api/admin/education" : `/api/admin/education/${editing.id}`;
 
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(dataToSend),
+        body: JSON.stringify(editing),
       });
 
       if (!res.ok) {
         const d = await res.json().catch(() => ({}));
         setSaveError(d.error ?? `Save failed (${res.status}). Please try again.`);
-        setSaving(false);
         return;
       }
 
@@ -140,9 +110,8 @@ export default function EducationAdminPage() {
           onReorder={handleReorder}
           renderItem={(item) => (
             <div className="bg-white rounded-xl border border-gray-100 p-4 flex items-center gap-4">
-              {/* Logo preview in list */}
               <div className="w-10 h-10 rounded-xl border bg-muted shrink-0 flex items-center justify-center overflow-hidden">
-                {item.logo && !item.logo.toString().startsWith("__content__") ? (
+                {item.logo ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={item.logo.toString()} alt={item.school} className="w-full h-full object-contain" />
                 ) : (
@@ -183,15 +152,9 @@ export default function EducationAdminPage() {
                 </div>
               ))}
 
-              {/* Image upload — shows preview, handles base64 via content table */}
               <ImageUpload
                 label="Institution Logo"
-                value={
-                  // Don't pass content key reference back to ImageUpload preview
-                  (editing.logo ?? "").toString().startsWith("__content__")
-                    ? ""
-                    : (editing.logo ?? "").toString()
-                }
+                value={(editing.logo ?? "").toString()}
                 onChange={(url) => setEditing((p) => ({ ...p, logo: url }))}
               />
             </div>

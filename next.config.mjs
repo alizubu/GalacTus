@@ -1,8 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  // Allow Prisma to work on Vercel
-  serverExternalPackages: ["@prisma/client", "bcryptjs"],
+  // Allow Prisma and Cloudinary to work on Vercel
+  serverExternalPackages: ["@prisma/client", "bcryptjs", "cloudinary"],
   async headers() {
     return [
       {

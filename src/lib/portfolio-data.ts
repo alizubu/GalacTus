@@ -154,32 +154,7 @@ export async function getSkills(): Promise<SkillItem[]> {
 export async function getEducation(): Promise<EducationItem[]> {
   try {
     const { db } = await import("@/lib/db");
-    const rows = await db.education.findMany({ orderBy: { order: "asc" } });
-
-    // Resolve __content__<key> logo references stored in the content table
-    const contentKeys = rows
-      .map((e) => e.logo)
-      .filter((logo): logo is string => typeof logo === "string" && logo.startsWith("__content__"))
-      .map((logo) => logo.slice("__content__".length));
-
-    let contentMap: Record<string, string> = {};
-    if (contentKeys.length > 0) {
-      const contentItems = await db.content.findMany({
-        where: { key: { in: contentKeys } },
-      });
-      contentItems.forEach((item: { key: string; value: string }) => {
-        contentMap[item.key] = item.value;
-      });
-    }
-
-    return rows.map((e) => {
-      let logo = e.logo ?? "";
-      if (logo.startsWith("__content__")) {
-        const key = logo.slice("__content__".length);
-        logo = contentMap[key] ?? "";
-      }
-      return { ...e, logo };
-    });
+    return await db.education.findMany({ orderBy: { order: "asc" } });
   } catch (err) {
     console.error("getEducation DB error:", err);
     return DATA.education.map((e, i) => ({

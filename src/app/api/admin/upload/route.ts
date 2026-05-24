@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/admin-guard";
+import { uploadToCloudinary } from "@/lib/cloudinary";
 
 export async function POST(req: NextRequest) {
   const guard = await requireAdmin();
@@ -8,6 +9,8 @@ export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
     const file = formData.get("file") as File | null;
+    // Optional folder override, e.g. "portfolio/avatars"
+    const folder = (formData.get("folder") as string | null) ?? "portfolio/uploads";
 
     if (!file) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
@@ -27,12 +30,23 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "File too large. Max 5MB." }, { status: 400 });
     }
 
-    // Convert to base64 data URL — works on Vercel (no filesystem needed)
+    // Convert to base64 data URL and upload to Cloudinary
     const bytes = await file.arrayBuffer();
     const base64 = Buffer.from(bytes).toString("base64");
     const dataUrl = `data:${file.type};base64,${base64}`;
 
-    return NextResponse.json({ url: dataUrl });
+    let url: string;
+    try {
+      url = await uploadToCloudinary(dataUrl, folder);
+    } catch (uploadErr) {
+      console.error("Cloudinary upload error:", uploadErr);
+      return NextResponse.json(
+        { error: "Image upload to Cloudinary failed. Check your CLOUDINARY_* environment variables." },
+        { status: 502 }
+      );
+    }
+
+    return NextResponse.json({ url });
   } catch (error) {
     console.error("Upload error:", error);
     return NextResponse.json({ error: "Upload failed. Please try again." }, { status: 500 });

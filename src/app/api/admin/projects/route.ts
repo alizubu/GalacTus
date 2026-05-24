@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { requireAdmin } from "@/lib/admin-guard";
 import { revalidatePath } from "next/cache";
+import { uploadToCloudinary, isBase64DataUrl } from "@/lib/cloudinary";
 
 export async function GET() {
   const guard = await requireAdmin();
@@ -24,13 +25,28 @@ export async function POST(req: NextRequest) {
     if (!title || !description) {
       return NextResponse.json({ error: "title and description are required." }, { status: 400 });
     }
+
+    // Upload base64 image to Cloudinary if needed
+    let resolvedImageUrl = imageUrl ?? "";
+    if (isBase64DataUrl(String(resolvedImageUrl))) {
+      try {
+        resolvedImageUrl = await uploadToCloudinary(String(resolvedImageUrl), "portfolio/projects");
+      } catch (uploadErr) {
+        console.error("Cloudinary upload error (project image):", uploadErr);
+        return NextResponse.json(
+          { error: "Image upload failed. Check your Cloudinary credentials and try again." },
+          { status: 502 }
+        );
+      }
+    }
+
     const count = await db.project.count();
     const item = await db.project.create({
       data: {
         title: String(title),
         href: String(href ?? "#"),
         description: String(description),
-        imageUrl: String(imageUrl ?? ""),
+        imageUrl: String(resolvedImageUrl),
         videoUrl: String(videoUrl ?? ""),
         tags: Array.isArray(tags) ? tags.map(String) : [],
         dates: String(dates ?? ""),
