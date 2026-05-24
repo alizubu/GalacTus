@@ -67,6 +67,36 @@ export const ICON_REGISTRY: NavbarIconDef[] = [
     component: Youtube as unknown as LucideIcon,
   },
   {
+    name: "facebook",
+    label: "Facebook",
+    defaultHref: "https://facebook.com/",
+    component: Icons.facebook as unknown as LucideIcon,
+  },
+  {
+    name: "instagram",
+    label: "Instagram",
+    defaultHref: "https://instagram.com/",
+    component: Icons.instagram as unknown as LucideIcon,
+  },
+  {
+    name: "dribbble",
+    label: "Dribbble",
+    defaultHref: "https://dribbble.com/",
+    component: Icons.dribbble as unknown as LucideIcon,
+  },
+  {
+    name: "behance",
+    label: "Behance",
+    defaultHref: "https://behance.net/",
+    component: Icons.behance as unknown as LucideIcon,
+  },
+  {
+    name: "telegram",
+    label: "Telegram",
+    defaultHref: "https://t.me/",
+    component: Icons.telegram as unknown as LucideIcon,
+  },
+  {
     name: "whatsapp",
     label: "WhatsApp",
     defaultHref: "https://wa.me/",
