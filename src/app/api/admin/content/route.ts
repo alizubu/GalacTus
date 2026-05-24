@@ -11,6 +11,13 @@ const ALLOWED_KEYS = new Set([
   "site_url","footer_text","og_image","__admin_password_hash__",
 ]);
 
+// Allowed key prefixes for dynamically-keyed content (e.g. edu_logo_<id>, exp_logo_<id>)
+const ALLOWED_PREFIXES = ["edu_logo_", "exp_logo_"];
+
+function isAllowedKey(key: string): boolean {
+  return ALLOWED_KEYS.has(key) || ALLOWED_PREFIXES.some((prefix) => key.startsWith(prefix));
+}
+
 export async function GET() {
   const guard = await requireAdmin();
   if (guard) return guard;
@@ -31,7 +38,7 @@ export async function PUT(req: NextRequest) {
   try {
     const body = await req.json();
     const updates = Object.entries(body) as [string, string][];
-    const filtered = updates.filter(([key]) => ALLOWED_KEYS.has(key));
+    const filtered = updates.filter(([key]) => isAllowedKey(key));
     await Promise.all(
       filtered.map(([key, value]) =>
         db.content.upsert({ where: { key }, update: { value }, create: { key, value } })

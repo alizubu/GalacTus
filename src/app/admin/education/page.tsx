@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Plus, Pencil, Trash2, X, Check } from "lucide-react";
+import { Plus, Pencil, Trash2, X, Check, AlertCircle } from "lucide-react";
 import DraggableList from "@/components/admin/DraggableList";
 import ImageUpload from "@/components/admin/ImageUpload";
 
@@ -15,27 +15,79 @@ const empty: Omit<Education, "id"> = {
   school: "", href: "#", logo: "", degree: "", startYear: "", endYear: "",
 };
 
+// Save base64 logo to content table to avoid large JSON bodies
+async function saveLogoToContent(key: string, base64: string): Promise<boolean> {
+  try {
+    const res = await fetch("/api/admin/content", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ [key]: base64 }),
+    });
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
+
 export default function EducationAdminPage() {
   const [items, setItems] = useState<Education[]>([]);
   const [editing, setEditing] = useState<Partial<Education> | null>(null);
   const [isNew, setIsNew] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState("");
   const [reordering, setReordering] = useState(false);
 
   const load = () => fetch("/api/admin/education").then((r) => r.json()).then(setItems);
   useEffect(() => { load(); }, []);
 
-  const openNew = () => { setEditing({ ...empty }); setIsNew(true); };
-  const openEdit = (item: Education) => { setEditing({ ...item }); setIsNew(false); };
-  const closeEdit = () => { setEditing(null); setIsNew(false); };
+  const openNew = () => { setEditing({ ...empty }); setIsNew(true); setSaveError(""); };
+  const openEdit = (item: Education) => { setEditing({ ...item }); setIsNew(false); setSaveError(""); };
+  const closeEdit = () => { setEditing(null); setIsNew(false); setSaveError(""); };
 
   const handleSave = async () => {
     if (!editing) return;
     setSaving(true);
-    const method = isNew ? "POST" : "PUT";
-    const url = isNew ? "/api/admin/education" : `/api/admin/education/${editing.id}`;
-    await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(editing) });
-    setSaving(false); closeEdit(); load();
+    setSaveError("");
+    try {
+      let logoValue = editing.logo ?? "";
+
+      // If logo is a base64 data URL, save it separately to avoid large request bodies
+      if (logoValue.startsWith("data:")) {
+        const contentKey = `edu_logo_${editing.id ?? "new_" + Date.now()}`;
+        const ok = await saveLogoToContent(contentKey, logoValue);
+        if (!ok) {
+          setSaveError("Failed to upload logo. Please try again.");
+          setSaving(false);
+          return;
+        }
+        // Store a small reference key instead of the full base64
+        logoValue = `__content__${contentKey}`;
+      }
+
+      const dataToSend = { ...editing, logo: logoValue };
+      const method = isNew ? "POST" : "PUT";
+      const url = isNew ? "/api/admin/education" : `/api/admin/education/${editing.id}`;
+
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(dataToSend),
+      });
+
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        setSaveError(d.error ?? `Save failed (${res.status}). Please try again.`);
+        setSaving(false);
+        return;
+      }
+
+      closeEdit();
+      load();
+    } catch (err) {
+      setSaveError(`Network error: ${err instanceof Error ? err.message : "Unknown error"}`);
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleDelete = async (id: string) => {
@@ -57,11 +109,11 @@ export default function EducationAdminPage() {
   }, [items]);
 
   const fields = [
-    { key: "school", label: "Institution Name" },
-    { key: "degree", label: "Degree / Program" },
+    { key: "school",    label: "Institution Name" },
+    { key: "degree",    label: "Degree / Program" },
     { key: "startYear", label: "Start Year" },
-    { key: "endYear", label: "End Year (or Present)" },
-    { key: "href", label: "Website URL" },
+    { key: "endYear",   label: "End Year (or Present)" },
+    { key: "href",      label: "Website URL" },
   ];
 
   return (
@@ -87,11 +139,22 @@ export default function EducationAdminPage() {
           items={items}
           onReorder={handleReorder}
           renderItem={(item) => (
-            <div className="bg-white rounded-xl border border-gray-100 p-4 flex items-start justify-between gap-4">
-              <div>
+            <div className="bg-white rounded-xl border border-gray-100 p-4 flex items-center gap-4">
+              {/* Logo preview in list */}
+              <div className="w-10 h-10 rounded-xl border bg-muted shrink-0 flex items-center justify-center overflow-hidden">
+                {item.logo && !item.logo.toString().startsWith("__content__") ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={item.logo.toString()} alt={item.school} className="w-full h-full object-contain" />
+                ) : (
+                  <span className="text-xs font-bold text-muted-foreground">
+                    {item.school.slice(0, 2).toUpperCase()}
+                  </span>
+                )}
+              </div>
+              <div className="flex-1 min-w-0">
                 <p className="font-semibold text-gray-900">{item.school}</p>
                 <p className="text-sm text-gray-500">{item.degree}</p>
-                <p className="text-xs text-gray-400 mt-1">{item.startYear} – {item.endYear}</p>
+                <p className="text-xs text-gray-400 mt-0.5">{item.startYear} – {item.endYear}</p>
               </div>
               <div className="flex gap-2 shrink-0">
                 <button onClick={() => openEdit(item)} className="p-2 rounded-lg hover:bg-gray-100 text-gray-500"><Pencil size={14} /></button>
@@ -113,18 +176,37 @@ export default function EducationAdminPage() {
               {fields.map((f) => (
                 <div key={f.key}>
                   <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">{f.label}</label>
-                  <input type="text" value={(editing as Record<string, string>)[f.key] ?? ""} onChange={(e) => setEditing((p) => ({ ...p, [f.key]: e.target.value }))} className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-gray-400" />
+                  <input type="text"
+                    value={(editing as Record<string, string>)[f.key] ?? ""}
+                    onChange={(e) => setEditing((p) => ({ ...p, [f.key]: e.target.value }))}
+                    className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-gray-400 transition-all duration-300" />
                 </div>
               ))}
+
+              {/* Image upload — shows preview, handles base64 via content table */}
               <ImageUpload
                 label="Institution Logo"
-                value={editing.logo ?? ""}
+                value={
+                  // Don't pass content key reference back to ImageUpload preview
+                  (editing.logo ?? "").toString().startsWith("__content__")
+                    ? ""
+                    : (editing.logo ?? "").toString()
+                }
                 onChange={(url) => setEditing((p) => ({ ...p, logo: url }))}
               />
             </div>
+
+            {saveError && (
+              <div className="mx-6 mb-2 flex items-start gap-2.5 p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs">
+                <AlertCircle size={14} className="shrink-0 mt-0.5" />
+                {saveError}
+              </div>
+            )}
+
             <div className="flex justify-end gap-3 p-6 border-t">
               <button onClick={closeEdit} className="px-4 py-2 text-sm text-gray-600">Cancel</button>
-              <button onClick={handleSave} disabled={saving} className="flex items-center gap-2 bg-gray-900 text-white px-5 py-2 rounded-lg text-sm font-medium disabled:opacity-60">
+              <button onClick={handleSave} disabled={saving}
+                className="flex items-center gap-2 bg-gray-900 text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-gray-700 transition-all disabled:opacity-60">
                 {saving ? "Saving..." : <><Check size={14} /> Save</>}
               </button>
             </div>
