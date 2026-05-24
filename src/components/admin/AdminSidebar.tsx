@@ -6,7 +6,7 @@ import { useState } from "react";
 import {
   LayoutDashboard, UserCircle, Briefcase, GraduationCap,
   Wrench, FolderKanban, ImageIcon, Mail, Settings,
-  MessageSquare, ExternalLink, FileText, Menu, X,
+  MessageSquare, ExternalLink, FileText, Menu, X, Navigation,
 } from "lucide-react";
 
 const nav = [
@@ -18,6 +18,7 @@ const nav = [
   { href: "/admin/skills",     label: "Skills",          icon: Wrench },
   { href: "/admin/projects",   label: "Case Studies",    icon: FolderKanban },
   { href: "/admin/gallery",    label: "Gallery",         icon: ImageIcon },
+  { href: "/admin/navbar",     label: "Navbar",          icon: Navigation },
   { href: "/admin/messages",   label: "Messages",        icon: MessageSquare },
   { href: "/admin/contact",    label: "Contact",         icon: Mail },
   { href: "/admin/settings",   label: "Settings",        icon: Settings },
@@ -47,7 +48,7 @@ function SidebarContent({ pathname, onClose }: { pathname: string; onClose?: () 
       {/* Nav */}
       <nav className="flex-1 py-5 px-3.5 space-y-1 overflow-y-auto admin-sidebar-scroll">
         <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-white/20 px-3 pb-2">Content</p>
-        {nav.slice(0, 7).map((item) => {
+        {nav.slice(0, 9).map((item) => {
           const active = item.exact
             ? pathname === item.href
             : pathname.startsWith(item.href) && item.href !== "/admin";
@@ -66,7 +67,7 @@ function SidebarContent({ pathname, onClose }: { pathname: string; onClose?: () 
         })}
 
         <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-white/20 px-3 pt-4 pb-2">Manage</p>
-        {nav.slice(7).map((item) => {
+        {nav.slice(9).map((item) => {
           const active = pathname.startsWith(item.href);
           return (
             <Link key={item.href} href={item.href} onClick={onClose}

@@ -87,3 +87,15 @@ model ContactMessage {
   read      Boolean  @default(false)
   createdAt DateTime @default(now())
 }
+
+model NavbarIcon {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  iconName      String   // e.g. "linkedin", "github", "home"
+  label         String   // display tooltip label
+  href          String   @default("#")
+  displayOrder  Int      @default(0)
+  visible       Boolean  @default(true)
+  isThemeToggle Boolean  @default(false)
+  isHome        Boolean  @default(false)
+  updatedAt     DateTime @updatedAt
+}
