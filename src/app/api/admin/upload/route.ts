@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/admin-guard";
-import { writeFile, mkdir } from "fs/promises";
-import { join } from "path";
 
 export async function POST(req: NextRequest) {
   const guard = await requireAdmin();
@@ -15,10 +13,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
 
-    // Validate type — JPG, JPEG, PNG, SVG only
-    const allowed = ["image/jpeg", "image/png", "image/svg+xml"];
+    // Validate type
+    const allowed = ["image/jpeg", "image/png", "image/svg+xml", "image/webp"];
     if (!allowed.includes(file.type)) {
-      return NextResponse.json({ error: "Invalid file type. Use JPG, JPEG, PNG, or SVG." }, { status: 400 });
+      return NextResponse.json(
+        { error: "Invalid file type. Use JPG, JPEG, PNG, SVG, or WebP." },
+        { status: 400 }
+      );
     }
 
     // Validate size (5MB max)
@@ -26,20 +27,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "File too large. Max 5MB." }, { status: 400 });
     }
 
+    // Convert to base64 data URL — works on Vercel (no filesystem needed)
     const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
+    const base64 = Buffer.from(bytes).toString("base64");
+    const dataUrl = `data:${file.type};base64,${base64}`;
 
-    // Save to /public/uploads/
-    const ext = file.name.split(".").pop() ?? "jpg";
-    const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-    const uploadDir = join(process.cwd(), "public", "uploads");
-
-    await mkdir(uploadDir, { recursive: true });
-    await writeFile(join(uploadDir, filename), buffer);
-
-    return NextResponse.json({ url: `/uploads/${filename}` });
+    return NextResponse.json({ url: dataUrl });
   } catch (error) {
     console.error("Upload error:", error);
-    return NextResponse.json({ error: "Upload failed" }, { status: 500 });
+    return NextResponse.json({ error: "Upload failed. Please try again." }, { status: 500 });
   }
 }
