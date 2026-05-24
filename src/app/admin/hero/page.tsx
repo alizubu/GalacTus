@@ -165,23 +165,13 @@ export default function HeroAdminPage() {
             <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
               {f.label}
             </label>
-            {f.multiline ? (
-              <textarea
-                rows={3}
-                value={values[f.key] ?? ""}
-                onChange={(e) => setValues((v) => ({ ...v, [f.key]: e.target.value }))}
-                placeholder={f.placeholder}
-                className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm text-gray-900 focus:outline-none focus:border-gray-400 resize-none"
-              />
-            ) : (
-              <input
-                type="text"
-                value={values[f.key] ?? ""}
-                onChange={(e) => setValues((v) => ({ ...v, [f.key]: e.target.value }))}
-                placeholder={f.placeholder}
-                className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm text-gray-900 focus:outline-none focus:border-gray-400"
-              />
-            )}
+            <input
+              type="text"
+              value={values[f.key] ?? ""}
+              onChange={(e) => setValues((v) => ({ ...v, [f.key]: e.target.value }))}
+              placeholder={f.placeholder}
+              className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm text-gray-900 focus:outline-none focus:border-gray-400"
+            />
           </div>
         ))}
       </div>
