@@ -12,7 +12,7 @@ async function main() {
     { key: "hero_greeting",    value: "Hi, I'm" },
     { key: "hero_tagline",     value: "Corporate Marketing Strategist & Digital Growth Architect" },
     { key: "hero_description", value: "5+ years driving real results for real businesses. No fake promises — only data-backed strategies and measurable growth." },
-    { key: "hero_avatar_url",  value: "/me.png" },
+    { key: "hero_avatar_url",  value: "/assets/images/shelvey.jpeg" },
     { key: "about_bio",        value: "With 5+ years of hands-on experience in corporate marketing and digital growth, I help businesses build powerful online identities and achieve measurable results. From launching targeted ad campaigns to designing high-converting websites, my approach is always data-backed and results-driven. No fake promises — only strategies that work.\n\nI specialize in Meta Ads, Google Ads, SEO, and web development, working with businesses across logistics, manufacturing, and export sectors. Based in Chittagong, Bangladesh, I've delivered 50+ projects with a 100% client satisfaction rate." },
     { key: "contact_email",    value: "shelveyedias@gmail.com" },
     { key: "contact_phone",    value: "+880 1835-412133" },
