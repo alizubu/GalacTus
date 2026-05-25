@@ -282,7 +282,7 @@ export default function UsersAdminPage() {
                   <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">{f.label}</label>
                   <input
                     type={f.type}
-                    value={(form as Record<string, string>)[f.key] ?? ""}
+                    value={(form as Record<string, unknown>)[f.key] as string ?? ""}
                     onChange={(e) => setForm((p) => ({ ...p, [f.key]: e.target.value }))}
                     placeholder={f.placeholder}
                     className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-400 transition-all"
