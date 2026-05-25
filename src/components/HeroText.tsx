@@ -15,8 +15,13 @@ export default function HeroText({ name, tagline, description }: HeroTextProps) 
     <div className="flex flex-col gap-2">
       {/* Hero name — word-by-word slide-up */}
       <h1
-        className="font-heading text-3xl sm:text-4xl lg:text-5xl tracking-tight leading-tight"
-        style={{ letterSpacing: "-0.02em", lineHeight: 1.1 }}
+        className="font-heading"
+        style={{
+          fontWeight: 800,
+          fontSize: "clamp(2.8rem, 6vw, 4.5rem)",
+          letterSpacing: "-0.03em",
+          lineHeight: 1.05,
+        }}
         aria-label={name}
       >
         {words.map((word, i) => (

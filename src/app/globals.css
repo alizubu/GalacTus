@@ -566,6 +566,12 @@
 
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-sans), 'DM Sans', sans-serif;
+  }
+
+  /* Apply Bricolage Grotesque to ALL headings site-wide */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading), 'Bricolage Grotesque', sans-serif;
   }
 
   /* Improve prose body text contrast in both modes */
