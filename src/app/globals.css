@@ -567,6 +567,8 @@
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-sans), 'DM Sans', sans-serif;
+    /* Use dynamic viewport height to avoid mobile toolbar layout shift */
+    min-height: 100dvh;
   }
 
   /* Apply Bricolage Grotesque to ALL headings site-wide */

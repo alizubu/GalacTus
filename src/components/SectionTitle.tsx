@@ -17,7 +17,7 @@ export function SectionTitle({
   className = "",
 }: SectionTitleProps) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-60px" });
+  const isInView = useInView(ref, { once: true, margin: "0px", amount: 0.2 });
 
   const words = title.split(" ");
 
