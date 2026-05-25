@@ -106,13 +106,10 @@ export default function SkillsSection({ items }: { items: SkillItem[] }) {
             initial={{ opacity: 0, y: 24 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5, delay: ci * 0.08, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="group relative rounded-2xl overflow-hidden transition-shadow duration-200 hover:shadow-md"
-            style={{
-              background: "#ffffff",
-              border: "1px solid #e5e7eb",
-              padding: "24px",
-              boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
-            }}
+            className="group relative rounded-2xl overflow-hidden transition-shadow duration-200
+                       hover:shadow-md
+                       bg-card border border-border"
+            style={{ padding: "24px", boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}
           >
             {/* Left accent bar */}
             <div
@@ -146,29 +143,14 @@ export default function SkillsSection({ items }: { items: SkillItem[] }) {
                     animate={isInView ? { opacity: 1, scale: 1 } : {}}
                     transition={{ duration: 0.22, delay: ci * 0.08 + si * 0.03 }}
                     className="inline-flex items-center gap-1.5 cursor-default select-none
-                               transition-all duration-150"
-                    style={{
-                      background: "#f9fafb",
-                      border: "1px solid #e5e7eb",
-                      borderRadius: "8px",
-                      padding: "6px 12px",
-                      fontSize: "13px",
-                      color: "#374151",
-                    }}
-                    onMouseEnter={(e) => {
-                      const el = e.currentTarget as HTMLElement;
-                      el.style.background = "#f3f4f6";
-                      el.style.borderColor = "#d1d5db";
-                    }}
-                    onMouseLeave={(e) => {
-                      const el = e.currentTarget as HTMLElement;
-                      el.style.background = "#f9fafb";
-                      el.style.borderColor = "#e5e7eb";
-                    }}
+                               transition-all duration-150
+                               bg-muted/60 hover:bg-muted border border-border
+                               text-foreground/80 hover:text-foreground
+                               rounded-lg px-3 py-1.5 text-[13px]"
                   >
                     <SkillIcon
                       size={13}
-                      style={{ color: "#6b7280", flexShrink: 0 }}
+                      className="text-muted-foreground shrink-0"
                       strokeWidth={1.8}
                     />
                     {skill.name}
