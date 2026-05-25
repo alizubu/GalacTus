@@ -100,7 +100,7 @@ export default function ProjectsSection({ items }: { items: ProjectItem[] }) {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="flex flex-col gap-y-1.5 items-center text-center px-2"
           >
-            <h2 className="text-2xl sm:text-3xl font-bold tracking-tighter">Featured Case Studies</h2>
+            <h2 className="font-heading text-2xl sm:text-3xl font-bold tracking-tighter">Featured Case Studies</h2>
             <p className="text-muted-foreground text-sm sm:text-base text-balance text-center max-w-sm sm:max-w-md">
               Real businesses. Real results. Data-backed strategy that made a measurable difference.
             </p>

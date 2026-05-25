@@ -17,7 +17,7 @@ export default function TestimonialsSection({ items }: { items: TestimonialItem[
             <div className="flex-1 h-px bg-linear-to-l from-transparent from-5% via-border via-95% to-transparent" />
           </div>
           <div className="flex flex-col gap-y-2 items-center">
-            <WordReveal text="Client Testimonials" className="text-3xl font-bold tracking-tighter sm:text-4xl" />
+            <WordReveal text="Client Testimonials" className="font-heading text-3xl font-bold tracking-tighter sm:text-4xl" />
             <FadeUp delay={0.15}>
               <p className="text-muted-foreground md:text-lg/relaxed text-balance text-center">
                 100% client satisfaction isn&apos;t a claim — it&apos;s a track record.

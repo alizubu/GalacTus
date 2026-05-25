@@ -38,7 +38,7 @@ export default function GallerySection({ items }: { items: GalleryItem[] }) {
             <div className="flex-1 h-px bg-linear-to-l from-transparent from-5% via-border via-95% to-transparent" />
           </div>
           <div className="flex flex-col gap-y-2 items-center">
-            <WordReveal text="Visual Branding & Corporate Assets" className="text-3xl font-bold tracking-tighter sm:text-4xl" />
+            <WordReveal text="Visual Branding & Corporate Assets" className="font-heading text-3xl font-bold tracking-tighter sm:text-4xl" />
             <FadeUp delay={0.15}>
               <p className="text-muted-foreground md:text-base/relaxed text-balance text-center max-w-lg">
                 Social media posters, brand identities, and corporate design work — crafted to make every pixel count.

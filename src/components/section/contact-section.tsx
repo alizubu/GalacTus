@@ -29,7 +29,7 @@ export default function ContactSection({ content = {} }: { content?: ContentMap 
 
       <div className="relative pt-12 pb-10 px-4 sm:px-8">
         <div className="flex flex-col items-center text-center gap-2 mb-8">
-          <h2 className="text-2xl sm:text-3xl font-bold tracking-tighter">{heading}</h2>
+          <h2 className="font-heading text-2xl sm:text-3xl font-bold tracking-tighter">{heading}</h2>
           <p className="text-muted-foreground text-balance max-w-md text-sm sm:text-base">{subtext}</p>
         </div>
 
