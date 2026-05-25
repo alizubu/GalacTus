@@ -95,7 +95,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 });
 
 /** Legacy auth — reads from ADMIN_EMAIL env var + content table hash.
- *  Used as fallback when AdminUser table hasn't been seeded yet. */
+ *  Used as fallback when AdminUser table hasn't been seeded yet.
+ *  Returns a real DB ObjectID if the master user has been seeded,
+ *  otherwise falls back to the placeholder "legacy-master". */
 async function legacyAuth(email: string, password: string) {
   const adminEmail = process.env.ADMIN_EMAIL;
   const envHash    = process.env.ADMIN_PASSWORD_HASH;
@@ -112,6 +114,23 @@ async function legacyAuth(email: string, password: string) {
   const valid = await bcrypt.compare(password, adminHash);
   if (!valid) return null;
 
+  // Try to find the seeded master so we return a real ObjectID
+  try {
+    const { db } = await import("@/lib/db");
+    const master = await db.adminUser.findUnique({ where: { email } });
+    if (master) {
+      return {
+        id:          master.id,
+        email:       master.email,
+        name:        master.name,
+        avatarUrl:   master.avatarUrl,
+        role:        "master",
+        permissions: [] as string[],
+      };
+    }
+  } catch {}
+
+  // Master not seeded yet — use placeholder id that the profile route handles gracefully
   return {
     id:          "legacy-master",
     email,

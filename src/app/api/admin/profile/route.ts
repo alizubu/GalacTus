@@ -4,6 +4,11 @@ import { requireAdmin, getSessionUser } from "@/lib/admin-guard";
 import bcrypt from "bcryptjs";
 import { uploadToCloudinary, isBase64DataUrl } from "@/lib/cloudinary";
 
+/** Returns true if s looks like a valid MongoDB ObjectID (24-char hex string) */
+function isValidObjectId(s: string): boolean {
+  return /^[a-f\d]{24}$/i.test(s);
+}
+
 /** GET /api/admin/profile — get own profile */
 export async function GET() {
   const guard = await requireAdmin();
@@ -12,8 +17,8 @@ export async function GET() {
     const me = await getSessionUser();
     if (!me) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    // Legacy master user (not in AdminUser table) — return session data
-    if (me.id === "legacy-master") {
+    // Legacy / pre-migration session — id is not a real ObjectID ("admin", "legacy-master", etc.)
+    if (!isValidObjectId(me.id)) {
       return NextResponse.json({
         id: me.id, email: me.email, name: me.name,
         avatarUrl: "", role: "master", permissions: [],
@@ -39,7 +44,9 @@ export async function PUT(req: NextRequest) {
   try {
     const me = await getSessionUser();
     if (!me) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    if (me.id === "legacy-master") {
+
+    // Legacy / pre-migration session — id is not a real ObjectID
+    if (!isValidObjectId(me.id)) {
       return NextResponse.json(
         { error: "Seed the master user first (run prisma/seed-master.ts) to enable profile editing." },
         { status: 400 }
