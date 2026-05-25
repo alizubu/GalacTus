@@ -19,7 +19,8 @@ export default function SaveButton({ onSave, label = "Save Changes" }: Props) {
       setTimeout(() => setState("idle"), 2500);
     } catch {
       setState("idle");
-      alert("Save failed. Please try again.");
+      const { toast } = await import("react-hot-toast");
+      toast.error("Save failed. Please try again.");
     }
   };
 

@@ -22,7 +22,7 @@ function PosterCard({ src, alt, category }: { src: string; alt: string; category
   );
 }
 
-export default function HackathonsSection({ items }: { items: GalleryItem[] }) {
+export default function GallerySection({ items }: { items: GalleryItem[] }) {
   const row1 = [...items, ...items, ...items];
   const row2 = [...[...items].reverse(), ...[...items].reverse(), ...[...items].reverse()];
 

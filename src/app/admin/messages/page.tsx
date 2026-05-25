@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Mail, MailOpen, Clock } from "lucide-react";
+import { Mail, MailOpen, Clock, Trash2 } from "lucide-react";
+import toast from "react-hot-toast";
 
 interface Message {
   id: string; name: string; email: string;
@@ -33,6 +34,21 @@ export default function MessagesAdminPage() {
     setSelected(msg);
   };
 
+  // [M8] Delete a message
+  const deleteMessage = async (id: string) => {
+    if (!confirm("Delete this message permanently?")) return;
+    try {
+      const res = await fetch("/api/admin/messages", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+      if (!res.ok) { toast.error("Failed to delete message."); return; }
+      if (selected?.id === id) setSelected(null);
+      load();
+    } catch { toast.error("Network error."); }
+  };
+
   const unread = messages.filter((m) => !m.read).length;
 
   return (
@@ -53,10 +69,9 @@ export default function MessagesAdminPage() {
             </div>
           )}
           {messages.map((msg) => (
-            <button
+            <div
               key={msg.id}
-              onClick={() => markRead(msg)}
-              className={`w-full text-left rounded-xl border p-4 transition-all ${
+              className={`rounded-xl border transition-all ${
                 selected?.id === msg.id
                   ? "border-gray-900 bg-gray-50"
                   : msg.read
@@ -64,22 +79,37 @@ export default function MessagesAdminPage() {
                   : "border-blue-200 bg-blue-50 hover:border-blue-300"
               }`}
             >
-              <div className="flex items-start gap-3">
-                <div className="mt-0.5">
-                  {msg.read ? <MailOpen size={15} className="text-gray-400" /> : <Mail size={15} className="text-blue-500" />}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center justify-between gap-2">
-                    <p className={`text-sm truncate ${msg.read ? "text-gray-700" : "font-semibold text-gray-900"}`}>{msg.name}</p>
-                    <span className="text-[10px] text-gray-400 shrink-0 flex items-center gap-1">
-                      <Clock size={10} />
-                      {new Date(msg.createdAt).toLocaleDateString()}
-                    </span>
+              <button
+                onClick={() => markRead(msg)}
+                className="w-full text-left p-4"
+              >
+                <div className="flex items-start gap-3">
+                  <div className="mt-0.5">
+                    {msg.read ? <MailOpen size={15} className="text-gray-400" /> : <Mail size={15} className="text-blue-500" />}
                   </div>
-                  <p className="text-xs text-gray-500 truncate mt-0.5">{msg.subject}</p>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center justify-between gap-2">
+                      <p className={`text-sm truncate ${msg.read ? "text-gray-700" : "font-semibold text-gray-900"}`}>{msg.name}</p>
+                      <span className="text-[10px] text-gray-400 shrink-0 flex items-center gap-1">
+                        <Clock size={10} />
+                        {new Date(msg.createdAt).toLocaleDateString()}
+                      </span>
+                    </div>
+                    <p className="text-xs text-gray-500 truncate mt-0.5">{msg.subject}</p>
+                  </div>
                 </div>
+              </button>
+              {/* [M8] Delete button */}
+              <div className="flex justify-end px-4 pb-2 -mt-1">
+                <button
+                  onClick={() => deleteMessage(msg.id)}
+                  className="p-1.5 rounded-lg text-gray-300 hover:text-red-500 hover:bg-red-50 transition-colors"
+                  title="Delete message"
+                >
+                  <Trash2 size={12} />
+                </button>
               </div>
-            </button>
+            </div>
           ))}
           {messages.length === 0 && (
             <div className="bg-white rounded-xl border border-dashed border-gray-200 p-10 text-center text-gray-400 text-sm">
@@ -91,10 +121,19 @@ export default function MessagesAdminPage() {
         {/* Detail */}
         {selected ? (
           <div className="bg-white rounded-xl border border-gray-100 p-6 space-y-4">
-            <div>
-              <h3 className="font-bold text-gray-900">{selected.subject}</h3>
-              <p className="text-sm text-gray-500 mt-1">From: <span className="font-medium text-gray-700">{selected.name}</span> · {selected.email}</p>
-              <p className="text-xs text-gray-400 mt-0.5">{new Date(selected.createdAt).toLocaleString()}</p>
+            <div className="flex items-start justify-between gap-2">
+              <div>
+                <h3 className="font-bold text-gray-900">{selected.subject}</h3>
+                <p className="text-sm text-gray-500 mt-1">From: <span className="font-medium text-gray-700">{selected.name}</span> · {selected.email}</p>
+                <p className="text-xs text-gray-400 mt-0.5">{new Date(selected.createdAt).toLocaleString()}</p>
+              </div>
+              <button
+                onClick={() => deleteMessage(selected.id)}
+                className="p-2 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors shrink-0"
+                title="Delete"
+              >
+                <Trash2 size={14} />
+              </button>
             </div>
             <hr />
             <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">{selected.message}</p>

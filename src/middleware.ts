@@ -1,19 +1,11 @@
-import { NextRequest, NextResponse } from "next/server";
+// [W6] Use NextAuth built-in auth() middleware helper — no manual cookie name detection
+import { auth } from "@/lib/auth";
+import { NextResponse } from "next/server";
 
-export async function middleware(req: NextRequest) {
+export default auth((req) => {
   const { pathname } = req.nextUrl;
   const isLoginPage = pathname === "/admin/login";
-
-  // NextAuth v5 stores the session token under 'authjs.session-token' (prod)
-  // or '__Secure-authjs.session-token' (https). We check both.
-  const token =
-    req.cookies.get("authjs.session-token")?.value ??
-    req.cookies.get("__Secure-authjs.session-token")?.value ??
-    // NextAuth v4 fallback cookie names
-    req.cookies.get("next-auth.session-token")?.value ??
-    req.cookies.get("__Secure-next-auth.session-token")?.value;
-
-  const isAuthenticated = !!token;
+  const isAuthenticated = !!req.auth;
 
   if (isLoginPage && isAuthenticated) {
     return NextResponse.redirect(new URL("/admin", req.url));
@@ -24,7 +16,7 @@ export async function middleware(req: NextRequest) {
   }
 
   return NextResponse.next();
-}
+});
 
 export const config = {
   matcher: ["/admin/:path+"],

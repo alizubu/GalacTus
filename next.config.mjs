@@ -3,6 +3,15 @@ const nextConfig = {
   reactStrictMode: true,
   // Allow Prisma and Cloudinary to work on Vercel
   serverExternalPackages: ["@prisma/client", "bcryptjs", "cloudinary"],
+  // [W4] Cloudinary domain for next/image
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+      },
+    ],
+  },
   async headers() {
     return [
       {

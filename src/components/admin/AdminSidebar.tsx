@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   LayoutDashboard, UserCircle, Briefcase, GraduationCap,
   Wrench, FolderKanban, ImageIcon, Mail, Settings,
@@ -24,17 +24,27 @@ const nav = [
   { href: "/admin/settings",   label: "Settings",        icon: Settings },
 ];
 
-function SidebarContent({ pathname, onClose }: { pathname: string; onClose?: () => void }) {
+function SidebarContent({ pathname, heroName, onClose }: { pathname: string; heroName: string; onClose?: () => void }) {
+  const initials = heroName
+    .split(" ")
+    .filter(Boolean)
+    .map((n) => n[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase() || "SD";
+
   return (
     <div className="flex flex-col h-full">
       {/* Brand */}
       <div className="flex items-center justify-between px-6 py-6 border-b border-white/[0.06]">
         <div className="flex items-center gap-3.5">
+          {/* [N12] Dynamic initials */}
           <div className="w-9 h-9 rounded-xl bg-white flex items-center justify-center shrink-0 shadow-md">
-            <span className="text-black text-[11px] font-black tracking-tight">SD</span>
+            <span className="text-black text-[11px] font-black tracking-tight">{initials}</span>
           </div>
           <div>
-            <p className="text-white text-sm font-bold leading-none">Shelvey Dias</p>
+            {/* [N12] Dynamic name */}
+            <p className="text-white text-sm font-bold leading-none">{heroName || "Portfolio Admin"}</p>
             <p className="text-white/30 text-[11px] mt-0.5 font-medium">Portfolio Admin</p>
           </div>
         </div>
@@ -99,6 +109,15 @@ function SidebarContent({ pathname, onClose }: { pathname: string; onClose?: () 
 export default function AdminSidebar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  // [N12] Fetch hero_name from DB dynamically
+  const [heroName, setHeroName] = useState("Shelvey Dias");
+
+  useEffect(() => {
+    fetch("/api/admin/content")
+      .then((r) => r.json())
+      .then((data) => { if (data.hero_name) setHeroName(data.hero_name); })
+      .catch(() => {});
+  }, []);
 
   return (
     <>
@@ -119,14 +138,14 @@ export default function AdminSidebar() {
         }`}
         style={{ background: "#0f0f0f" }}
       >
-        <SidebarContent pathname={pathname} onClose={() => setOpen(false)} />
+        <SidebarContent pathname={pathname} heroName={heroName} onClose={() => setOpen(false)} />
       </aside>
 
       <aside
         className="hidden lg:flex flex-col w-[240px] shrink-0 h-screen sticky top-0"
         style={{ background: "#0f0f0f", borderRight: "1px solid rgba(255,255,255,0.04)" }}
       >
-        <SidebarContent pathname={pathname} />
+        <SidebarContent pathname={pathname} heroName={heroName} />
       </aside>
     </>
   );

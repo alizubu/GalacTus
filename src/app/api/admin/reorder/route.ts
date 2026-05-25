@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "collection and ids are required." }, { status: 400 });
     }
 
-    const validCollections = ["experience", "skill", "education", "project"];
+    const validCollections = ["experience", "skill", "education", "project", "galleryItem"];
     if (!validCollections.includes(collection)) {
       return NextResponse.json({ error: "Invalid collection." }, { status: 400 });
     }
@@ -24,10 +24,11 @@ export async function POST(req: NextRequest) {
     // Update order for each id
     await Promise.all(
       ids.map((id, index) => {
-        if (collection === "experience") return db.experience.update({ where: { id }, data: { order: index } });
-        if (collection === "skill")      return db.skill.update({ where: { id }, data: { order: index } });
-        if (collection === "education")  return db.education.update({ where: { id }, data: { order: index } });
-        if (collection === "project")    return db.project.update({ where: { id }, data: { order: index } });
+        if (collection === "experience")  return db.experience.update({ where: { id }, data: { order: index } });
+        if (collection === "skill")       return db.skill.update({ where: { id }, data: { order: index } });
+        if (collection === "education")   return db.education.update({ where: { id }, data: { order: index } });
+        if (collection === "project")     return db.project.update({ where: { id }, data: { order: index } });
+        if (collection === "galleryItem") return db.galleryItem.update({ where: { id }, data: { order: index } });
         return Promise.resolve();
       })
     );

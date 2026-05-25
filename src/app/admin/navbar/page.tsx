@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { GripVertical, Trash2, Eye, EyeOff, Check, AlertCircle, Plus, Lock } from "lucide-react";
 import { ICON_REGISTRY, DEFAULT_NAVBAR_ICONS, getIconDef, type NavbarIconDef } from "@/lib/navbar-icons";
 import { ModeToggle } from "@/components/mode-toggle";
@@ -19,7 +19,8 @@ type NavItem = {
 
 // ── Small inline draggable list ──────────────────────────────────────────────
 function useDrag(items: NavItem[], setItems: React.Dispatch<React.SetStateAction<NavItem[]>>) {
-  const dragId = { current: "" };
+  // [M1] useRef instead of plain object literal — persists across re-renders
+  const dragId = useRef("");
 
   const onDragStart = (id: string) => { dragId.current = id; };
   const onDragOver = (e: React.DragEvent) => e.preventDefault();
@@ -29,7 +30,6 @@ function useDrag(items: NavItem[], setItems: React.Dispatch<React.SetStateAction
       const arr = [...prev];
       const from = arr.findIndex((i) => i.id === dragId.current);
       const to   = arr.findIndex((i) => i.id === targetId);
-      // Home stays first, theme stays last
       if (arr[to].isHome || arr[to].isThemeToggle) return prev;
       if (arr[from].isHome || arr[from].isThemeToggle) return prev;
       const [moved] = arr.splice(from, 1);
@@ -135,8 +135,9 @@ export default function NavbarAdminPage() {
 
   const visibleCount = items.filter((i) => i.visible).length;
 
+  // [M12] Limit based on total items count (not just visible) so hidden items still occupy a slot
   const addIcon = useCallback((def: NavbarIconDef) => {
-    if (visibleCount >= MAX_ICONS) {
+    if (items.length >= MAX_ICONS) {
       setLimitWarn(true);
       setTimeout(() => setLimitWarn(false), 3000);
       return;

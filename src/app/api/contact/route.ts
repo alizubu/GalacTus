@@ -3,8 +3,34 @@ import { db } from "@/lib/db";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+// [W3] Simple in-memory rate limiter: max 3 submissions per IP per hour
+const ipMap = new Map<string, { count: number; resetAt: number }>();
+const WINDOW_MS = 60 * 60 * 1000; // 1 hour
+const MAX_PER_WINDOW = 3;
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const entry = ipMap.get(ip);
+  if (!entry || now > entry.resetAt) {
+    ipMap.set(ip, { count: 1, resetAt: now + WINDOW_MS });
+    return false;
+  }
+  if (entry.count >= MAX_PER_WINDOW) return true;
+  entry.count++;
+  return false;
+}
+
 export async function POST(req: NextRequest) {
   try {
+    // [W3] Rate limit by IP
+    const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+    if (isRateLimited(ip)) {
+      return NextResponse.json(
+        { error: "Too many submissions. Please try again in an hour." },
+        { status: 429 }
+      );
+    }
+
     const { name, email, subject, message } = await req.json();
 
     // Validate presence and basic format

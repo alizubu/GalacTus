@@ -47,6 +47,14 @@ export default async function Page() {
   const bio = content.about_bio ?? "";
   const initials = name.split(" ").filter(Boolean).map((n: string) => n[0]).join("").slice(0, 2).toUpperCase();
 
+  // [N5] DB-driven about stats
+  const aboutStats = [
+    { value: parseInt(content.about_stat_years ?? "5"),        suffix: "+", label: "Years Experience" },
+    { value: parseInt(content.about_stat_projects ?? "50"),    suffix: "+", label: "Projects Delivered" },
+    { value: parseInt(content.about_stat_satisfaction ?? "100"), suffix: "%", label: "Client Satisfaction" },
+    { value: parseInt(content.about_stat_industries ?? "3"),   suffix: "",  label: "Industries Served" },
+  ];
+
   return (
     <main className="min-h-dvh flex flex-col gap-10 sm:gap-14 relative">
 
@@ -92,7 +100,7 @@ export default async function Page() {
               dangerouslySetInnerHTML={{ __html: bio }}
             />
           </FadeUp>
-          <AboutStats />
+          <AboutStats stats={aboutStats} />
         </div>
       </section>
 

@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect, useCallback, KeyboardEvent } from "react";
-import { X, Plus, GripVertical } from "lucide-react";
+import { useState, useEffect, KeyboardEvent } from "react";
+import { X, Plus, GripVertical, Pencil, Check } from "lucide-react";
+import toast from "react-hot-toast";
 
 interface Skill { id: string; name: string; order: number; }
 
@@ -12,7 +13,8 @@ export default function SkillsAdminPage() {
   const [reordering, setReordering] = useState(false);
   const [draggingId, setDraggingId] = useState<string | null>(null);
   const [overId, setOverId] = useState<string | null>(null);
-  const dragItem = useCallback(() => ({ current: null as string | null }), []);
+  const [editingId, setEditingId] = useState<string | null>(null); // [M9]
+  const [editingName, setEditingName] = useState("");               // [M9]
   const dragRef = { current: null as string | null };
 
   const load = () =>
@@ -30,17 +32,33 @@ export default function SkillsAdminPage() {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name }),
       });
-      if (!res.ok) return;
+      if (!res.ok) { toast.error("Failed to add skill."); return; }
       setInput(""); load();
-    } catch (err) { console.error(err); }
+    } catch { toast.error("Network error."); }
   };
 
   const removeSkill = async (id: string) => {
     try {
       const res = await fetch(`/api/admin/skills/${id}`, { method: "DELETE" });
-      if (!res.ok) return;
+      if (!res.ok) { toast.error("Failed to delete skill."); return; }
       load();
-    } catch (err) { console.error(err); }
+    } catch { toast.error("Network error."); }
+  };
+
+  // [M9] Rename a skill
+  const startEdit = (s: Skill) => { setEditingId(s.id); setEditingName(s.name); };
+  const cancelEdit = () => { setEditingId(null); setEditingName(""); };
+  const saveEdit = async (id: string) => {
+    const name = editingName.trim();
+    if (!name) return;
+    try {
+      const res = await fetch(`/api/admin/skills/${id}`, {
+        method: "PUT", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name }),
+      });
+      if (!res.ok) { toast.error("Failed to rename skill."); return; }
+      setEditingId(null); setEditingName(""); load();
+    } catch { toast.error("Network error."); }
   };
 
   const handleKey = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -77,13 +95,12 @@ export default function SkillsAdminPage() {
         <p className="text-gray-500 text-sm mt-1">
           {skills.length} skills · Type and press Enter to add
           {reordering && <span className="text-blue-500 ml-2">· Saving order...</span>}
-          {skills.length > 1 && !reordering && <span className="text-gray-400 ml-2">· Drag rows to reorder</span>}
+          {skills.length > 1 && !reordering && <span className="text-gray-400 ml-2">· Drag to reorder</span>}
         </p>
       </div>
 
       {loadError && <p className="text-red-500 text-sm">Failed to load skills. Refresh the page.</p>}
 
-      {/* Add input */}
       <div className="bg-white rounded-xl border border-gray-100 p-5">
         <div className="flex gap-3">
           <input type="text" value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={handleKey}
@@ -95,13 +112,12 @@ export default function SkillsAdminPage() {
         </div>
       </div>
 
-      {/* Draggable skill list */}
       <div className="bg-white rounded-xl border border-gray-100 p-5 space-y-1.5">
         {skills.length === 0 && <p className="text-gray-400 text-sm">No skills yet. Add some above.</p>}
         {skills.map((s) => (
           <div
             key={s.id}
-            draggable
+            draggable={editingId !== s.id}
             onDragStart={() => handleDragStart(s.id)}
             onDragEnter={() => handleDragEnter(s.id)}
             onDragEnd={handleDragEnd}
@@ -111,10 +127,35 @@ export default function SkillsAdminPage() {
               ${overId === s.id ? "border-t-2 border-blue-400" : ""}`}
           >
             <GripVertical size={14} className="text-gray-300 cursor-grab shrink-0" />
-            <span className="flex-1 text-sm text-gray-800">{s.name}</span>
-            <button onClick={() => removeSkill(s.id)} className="text-gray-300 hover:text-red-500 transition-colors p-0.5">
-              <X size={12} />
-            </button>
+
+            {editingId === s.id ? (
+              // [M9] inline rename input
+              <input
+                autoFocus
+                type="text"
+                value={editingName}
+                onChange={(e) => setEditingName(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") { e.preventDefault(); saveEdit(s.id); }
+                  if (e.key === "Escape") cancelEdit();
+                }}
+                className="flex-1 border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:border-gray-500"
+              />
+            ) : (
+              <span className="flex-1 text-sm text-gray-800">{s.name}</span>
+            )}
+
+            {editingId === s.id ? (
+              <>
+                <button onClick={() => saveEdit(s.id)} className="text-green-500 hover:text-green-700 transition-colors p-0.5"><Check size={13} /></button>
+                <button onClick={cancelEdit} className="text-gray-300 hover:text-gray-500 transition-colors p-0.5"><X size={13} /></button>
+              </>
+            ) : (
+              <>
+                <button onClick={() => startEdit(s)} className="text-gray-300 hover:text-blue-500 transition-colors p-0.5"><Pencil size={12} /></button>
+                <button onClick={() => removeSkill(s.id)} className="text-gray-300 hover:text-red-500 transition-colors p-0.5"><X size={12} /></button>
+              </>
+            )}
           </div>
         ))}
       </div>

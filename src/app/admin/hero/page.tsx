@@ -8,6 +8,7 @@ const TEXT_FIELDS = [
   { key: "hero_name",        label: "Full Name",          placeholder: "Shelvey Dias" },
   { key: "hero_greeting",    label: "Greeting",           placeholder: "Hi, I'm" },
   { key: "hero_tagline",     label: "Tagline / Role",     placeholder: "Corporate Marketing Strategist" },
+  { key: "hero_description", label: "Sub-description",    placeholder: "5+ years driving real results..." },
 ];
 
 function AvatarUpload({
@@ -105,7 +106,7 @@ function AvatarUpload({
       <input
         ref={inputRef}
         type="file"
-        accept="image/jpeg,image/png,image/svg+xml"
+        accept="image/jpeg,image/png,image/svg+xml,image/webp"
         className="hidden"
         onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); e.target.value = ""; }}
       />

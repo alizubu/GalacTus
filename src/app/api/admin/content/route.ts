@@ -7,9 +7,10 @@ import { uploadToCloudinary, isBase64DataUrl } from "@/lib/cloudinary";
 // Allowed content keys — prevent arbitrary key injection
 const ALLOWED_KEYS = new Set([
   "hero_name","hero_greeting","hero_tagline","hero_description","hero_avatar_url",
-  "about_bio","contact_email","contact_phone","contact_address","contact_linkedin",
-  "contact_website","contact_heading","contact_subtext","site_title","site_description",
-  "site_url","footer_text","og_image","__admin_password_hash__",
+  "about_bio","about_stat_years","about_stat_projects","about_stat_satisfaction","about_stat_industries",
+  "contact_email","contact_phone","contact_address","contact_linkedin",
+  "contact_website","contact_heading","contact_subtext","contact_availability",
+  "site_title","site_description","site_url","footer_text","og_image","__admin_password_hash__",
 ]);
 
 // Allowed key prefixes for dynamically-keyed content (e.g. edu_logo_<id>, exp_logo_<id>)

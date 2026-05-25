@@ -9,6 +9,7 @@ export default function ContactSection({ content = {} }: { content?: ContentMap 
   const address = content.contact_address ?? "51 Brickfield Road, Patherghata, Chittagong";
   const heading = content.contact_heading ?? "Get in Touch";
   const subtext = content.contact_subtext ?? "Want to discuss a project or strategy? Reach out — I respond to all serious business inquiries.";
+  const availability = content.contact_availability ?? "Monday – Friday, 10 AM – 7 PM (BST)";
 
   const contactInfo = [
     { icon: Mail, label: "Email", value: email, href: `mailto:${email}`, external: false },
@@ -49,7 +50,7 @@ export default function ContactSection({ content = {} }: { content?: ContentMap 
                 </div>
               </a>
             ))}
-            <p className="text-xs text-muted-foreground mt-1">🕙 Available Monday – Friday, 10 AM – 7 PM (BST)</p>
+            <p className="text-xs text-muted-foreground mt-1">🕙 Available {availability}</p>
           </div>
 
           <div className="flex flex-col gap-3">

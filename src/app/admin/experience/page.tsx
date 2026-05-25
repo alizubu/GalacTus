@@ -38,8 +38,22 @@ export default function ExperienceAdminPage() {
     setSaving(true);
     const method = isNew ? "POST" : "PUT";
     const url = isNew ? "/api/admin/experience" : `/api/admin/experience/${editing.id}`;
-    await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(editing) });
-    setSaving(false); closeEdit(); load();
+    try {
+      const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(editing) });
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        const { toast } = await import("react-hot-toast");
+        toast.error(d.error ?? "Save failed. Please try again.");
+        return;
+      }
+      closeEdit();
+      load();
+    } catch {
+      const { toast } = await import("react-hot-toast");
+      toast.error("Network error. Please try again.");
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleDelete = async (id: string) => {

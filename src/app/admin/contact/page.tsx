@@ -11,6 +11,7 @@ const FIELDS = [
   { key: "contact_website", label: "Website URL", placeholder: "https://shelveyswork.com" },
   { key: "contact_heading", label: "Section Heading", placeholder: "Get in Touch" },
   { key: "contact_subtext", label: "Section Subtext", placeholder: "Want to discuss a project...", multiline: true },
+  { key: "contact_availability", label: "Availability Hours", placeholder: "Monday – Friday, 10 AM – 7 PM (BST)" },
 ];
 
 export default function ContactAdminPage() {
