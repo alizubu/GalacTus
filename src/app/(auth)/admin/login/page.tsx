@@ -1,114 +1,127 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
 import { Eye, EyeOff, AlertCircle, Sun, Moon } from "lucide-react";
+import { FlickeringGrid } from "@/components/magicui/flickering-grid";
 
-// ── Gradient SVG spinner (for loading overlay) ──────────────────────────────
-function GradientSpinner({ size = 52 }: { size?: number }) {
-  const r = size / 2 - 4;
-  const circ = 2 * Math.PI * r;
+// ── Light Rays — pure CSS, no extra deps ───────────────────────────────────
+function LightRays({ dark }: { dark: boolean }) {
   return (
-    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} fill="none"
+    <div
+      className="absolute inset-0 pointer-events-none overflow-hidden"
+      style={{ zIndex: 1 }}
+    >
+      {/* Primary center ray */}
+      <div
+        style={{
+          position: "absolute",
+          top: 0,
+          left: "50%",
+          transform: "translateX(-50%)",
+          width: "60%",
+          height: "70%",
+          background: dark
+            ? "conic-gradient(from 270deg at 50% 0%, transparent 10%, rgba(139,92,246,0.12) 30%, rgba(168,85,247,0.09) 50%, rgba(139,92,246,0.12) 70%, transparent 90%)"
+            : "conic-gradient(from 270deg at 50% 0%, transparent 10%, rgba(255,255,255,0.9) 30%, rgba(240,240,255,0.7) 50%, rgba(255,255,255,0.9) 70%, transparent 90%)",
+          filter: dark ? "blur(32px)" : "blur(28px)",
+        }}
+      />
+      {/* Secondary soft glow at top */}
+      <div
+        style={{
+          position: "absolute",
+          top: "-10%",
+          left: "50%",
+          transform: "translateX(-50%)",
+          width: "80%",
+          height: "45%",
+          background: dark
+            ? "radial-gradient(ellipse 80% 60% at 50% 0%, rgba(139,92,246,0.18) 0%, transparent 70%)"
+            : "radial-gradient(ellipse 80% 60% at 50% 0%, rgba(220,215,255,0.55) 0%, transparent 70%)",
+          filter: "blur(8px)",
+        }}
+      />
+    </div>
+  );
+}
+
+// ── Gradient spinner for loading overlay ───────────────────────────────────
+function GradientSpinner() {
+  const size = 48, r = 20, circ = 2 * Math.PI * r;
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none"
       className="animate-spin" style={{ transformOrigin: "center" }}>
       <defs>
-        <linearGradient id="sg2" x1="0%" y1="0%" x2="100%" y2="100%">
+        <linearGradient id="sp" x1="0%" y1="0%" x2="100%" y2="100%">
           <stop offset="0%"   stopColor="#8b5cf6" />
           <stop offset="100%" stopColor="#ec4899" />
         </linearGradient>
       </defs>
-      <circle cx={size/2} cy={size/2} r={r} stroke="rgba(255,255,255,0.06)" strokeWidth="3" />
-      <circle cx={size/2} cy={size/2} r={r} stroke="url(#sg2)" strokeWidth="3"
+      <circle cx="24" cy="24" r={r} stroke="rgba(139,92,246,0.15)" strokeWidth="3" />
+      <circle cx="24" cy="24" r={r} stroke="url(#sp)" strokeWidth="3"
         strokeLinecap="round"
-        strokeDasharray={`${circ * 0.7} ${circ * 0.3}`}
-        strokeDashoffset={circ * 0.25} />
+        strokeDasharray={`${circ * 0.72} ${circ * 0.28}`}
+        strokeDashoffset={circ * 0.2} />
     </svg>
   );
 }
 
-// Small spinner inside submit button
-function ButtonSpinner() {
+// ── Button spinner ──────────────────────────────────────────────────────────
+function BtnSpinner() {
   return (
-    <svg width="15" height="15" viewBox="0 0 15 15" fill="none"
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"
       className="animate-spin shrink-0" style={{ transformOrigin: "center" }}>
-      <circle cx="7.5" cy="7.5" r="5.5" stroke="rgba(255,255,255,0.25)" strokeWidth="2" />
-      <circle cx="7.5" cy="7.5" r="5.5" stroke="white" strokeWidth="2"
-        strokeLinecap="round" strokeDasharray="20 15" />
+      <circle cx="7" cy="7" r="5" stroke="rgba(255,255,255,0.25)" strokeWidth="2" />
+      <circle cx="7" cy="7" r="5" stroke="white" strokeWidth="2"
+        strokeLinecap="round" strokeDasharray="18 13" />
     </svg>
   );
 }
 
-// ── Left-panel blobs — purple + pink only ──────────────────────────────────
-function LeftPanelBlobs() {
-  return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      <div className="absolute rounded-full" style={{
-        width: 480, height: 480,
-        background: "radial-gradient(circle, rgba(139,92,246,0.38) 0%, transparent 65%)",
-        top: "-15%", left: "-20%",
-        animation: "blob-float1 22s infinite alternate ease-in-out",
-      }} />
-      <div className="absolute rounded-full" style={{
-        width: 360, height: 360,
-        background: "radial-gradient(circle, rgba(236,72,153,0.28) 0%, transparent 65%)",
-        bottom: "-10%", right: "-15%",
-        animation: "blob-float2 28s infinite alternate ease-in-out",
-      }} />
-      <div className="absolute rounded-full" style={{
-        width: 260, height: 260,
-        background: "radial-gradient(circle, rgba(168,85,247,0.22) 0%, transparent 65%)",
-        top: "45%", right: "5%",
-        animation: "blob-float3 32s infinite alternate ease-in-out",
-      }} />
-    </div>
-  );
-}
-
-// ── Loading overlay blobs ───────────────────────────────────────────────────
-function LoadingBlobs() {
-  return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      <div className="absolute rounded-full" style={{
-        width: 600, height: 600,
-        background: "radial-gradient(circle, rgba(139,92,246,0.22) 0%, transparent 65%)",
-        top: "-15%", left: "-15%",
-        animation: "blob-float1 20s infinite alternate ease-in-out",
-      }} />
-      <div className="absolute rounded-full" style={{
-        width: 480, height: 480,
-        background: "radial-gradient(circle, rgba(236,72,153,0.16) 0%, transparent 65%)",
-        bottom: "-10%", right: "-10%",
-        animation: "blob-float2 26s infinite alternate ease-in-out",
-      }} />
-    </div>
-  );
-}
-
-// ── Main component ──────────────────────────────────────────────────────────
+// ── Main page ───────────────────────────────────────────────────────────────
 export default function AdminLoginPage() {
   const router = useRouter();
-  const [email, setEmail]       = useState("");
+  const [email,    setEmail]    = useState("");
   const [password, setPassword] = useState("");
-  const [showPw, setShowPw]     = useState(false);
-  const [error, setError]       = useState("");
-  const [loading, setLoading]   = useState(false);
-  const [showOverlay, setShowOverlay] = useState(false);
-  const [dark, setDark]         = useState(false);
+  const [showPw,   setShowPw]   = useState(false);
+  const [error,    setError]    = useState("");
+  const [loading,  setLoading]  = useState(false);
+  const [overlay,  setOverlay]  = useState(false);
+  const [dark,     setDark]     = useState(false);
+  const [mounted,  setMounted]  = useState(false);
 
-  // Persist theme preference in localStorage
   useEffect(() => {
-    const saved = localStorage.getItem("login-theme");
-    if (saved === "dark") setDark(true);
+    setMounted(true);
+    try {
+      setDark(localStorage.getItem("admin-theme") === "dark");
+    } catch {}
   }, []);
 
-  const toggleTheme = () => {
-    setDark((d) => {
-      localStorage.setItem("login-theme", d ? "light" : "dark");
-      return !d;
-    });
-  };
+  // ── Theme toggle with View Transition circle-expand ──────────────────────
+  const toggleTheme = useCallback((e: React.MouseEvent) => {
+    const x = e.clientX, y = e.clientY;
+    const next = !dark;
+
+    const doChange = () => {
+      setDark(next);
+      try { localStorage.setItem("admin-theme", next ? "dark" : "light"); } catch {}
+    };
+
+    if (
+      typeof document !== "undefined" &&
+      "startViewTransition" in document
+    ) {
+      document.documentElement.style.setProperty("--vt-x", `${x}px`);
+      document.documentElement.style.setProperty("--vt-y", `${y}px`);
+      (document as Document & { startViewTransition: (cb: () => void) => void })
+        .startViewTransition(doChange);
+    } else {
+      doChange();
+    }
+  }, [dark]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -119,171 +132,123 @@ export default function AdminLoginPage() {
     if (res?.error) {
       setError("Invalid email or password.");
     } else {
-      setShowOverlay(true);
+      setOverlay(true);
       router.push("/admin");
     }
   };
 
-  // ── Theme-derived values ──
-  const rightBg  = dark ? "#13131a" : "#ffffff";
-  const pageBg   = dark ? "#0c0c12" : "#f5f6fa";
-  const inputBg  = dark ? "rgba(255,255,255,0.04)" : "#ffffff";
+  // ── Theme-derived tokens ─────────────────────────────────────────────────
+  const pageBg         = dark ? "#0f0f13" : "#ffffff";
+  const gridColor      = dark ? "rgb(99,102,241)"  : "rgb(99,102,241)";
+  const gridMaxOpacity = dark ? 0.2 : 0.09;
+
+  const cardBg     = dark ? "#1a1b23" : "#ffffff";
+  const cardBorder = dark ? "#2d2f3a" : "#e5e7eb";
+  const cardShadow = dark
+    ? "0 20px 40px rgba(0,0,0,0.45), 0 4px 12px rgba(0,0,0,0.3)"
+    : "0 8px 32px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04)";
+
+  const titleColor    = dark ? "#f9fafb" : "#111827";
+  const subtitleColor = dark ? "#9ca3af" : "#6b7280";
+  const labelColor    = dark ? "rgba(255,255,255,0.4)" : "#6b7280";
+  const footerColor   = dark ? "rgba(255,255,255,0.2)" : "#d1d5db";
+
+  const inputBg     = dark ? "rgba(255,255,255,0.04)" : "#f9fafb";
   const inputBorder = dark ? "rgba(255,255,255,0.09)" : "#e5e7eb";
   const inputColor  = dark ? "rgba(255,255,255,0.9)"  : "#111827";
-  const labelColor  = dark ? "rgba(255,255,255,0.35)" : "#6b7280";
-  const titleColor  = dark ? "rgba(255,255,255,0.95)" : "#111827";
-  const subtitleColor = dark ? "rgba(255,255,255,0.35)" : "#9ca3af";
-  const footerColor   = dark ? "rgba(255,255,255,0.2)"  : "#d1d5db";
-  const dividerColor  = dark ? "rgba(255,255,255,0.06)" : "#f3f4f6";
-  const placeholderCls = dark ? "placeholder:text-white/18" : "placeholder:text-gray-400";
+  const inputPh     = dark ? "placeholder:text-white/20" : "placeholder:text-gray-400";
   const eyeColor    = dark ? "rgba(255,255,255,0.28)" : "#9ca3af";
-  const toggleBg    = dark ? "rgba(255,255,255,0.07)" : "#f3f4f6";
+
+  const toggleBg     = dark ? "rgba(255,255,255,0.06)" : "#f3f4f6";
   const toggleBorder = dark ? "rgba(255,255,255,0.10)" : "#e5e7eb";
   const toggleColor  = dark ? "rgba(255,255,255,0.55)" : "#6b7280";
 
-  const onInputFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+  const onFocus = (e: React.FocusEvent<HTMLInputElement>) => {
     e.target.style.borderColor = "#8b5cf6";
-    e.target.style.boxShadow = "0 0 0 3px rgba(139,92,246,0.12)";
-    e.target.style.background = dark ? "rgba(255,255,255,0.07)" : "#fff";
+    e.target.style.boxShadow   = "0 0 0 3px rgba(139,92,246,0.12)";
+    e.target.style.background  = dark ? "rgba(255,255,255,0.07)" : "#ffffff";
   };
-  const onInputBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+  const onBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     e.target.style.borderColor = inputBorder;
     e.target.style.boxShadow   = "none";
     e.target.style.background  = inputBg;
   };
+
+  if (!mounted) return null;
 
   return (
     <div
       className="relative min-h-screen overflow-hidden transition-colors duration-300"
       style={{ background: pageBg }}
     >
-      {/* ── Theme toggle — top right ── */}
-      <div className="absolute top-4 right-4 z-20">
+      {/* ── Layer 0: FlickeringGrid background ── */}
+      <div className="absolute inset-0" style={{ zIndex: 0 }}>
+        <FlickeringGrid
+          className="w-full h-full"
+          squareSize={4}
+          gridGap={6}
+          flickerChance={0.12}
+          color={gridColor}
+          maxOpacity={gridMaxOpacity}
+        />
+      </div>
+
+      {/* ── Layer 1: Light Rays behind the card ── */}
+      <LightRays dark={dark} />
+
+      {/* ── Theme toggle — top right (fixed) ── */}
+      <div className="fixed top-4 right-4 z-30">
         <button
           onClick={toggleTheme}
-          className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-[13px] font-medium transition-all duration-200 hover:scale-105 active:scale-95"
+          className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-[13px] font-medium
+                     transition-all duration-200 hover:scale-[1.04] active:scale-[0.97]"
           style={{
             background: toggleBg,
-            border: `1px solid ${toggleBorder}`,
-            color: toggleColor,
+            border:     `1px solid ${toggleBorder}`,
+            color:      toggleColor,
           }}
-          title={dark ? "Switch to light mode" : "Switch to dark mode"}
+          title={dark ? "Switch to Light" : "Switch to Dark"}
         >
-          {dark ? <Sun size={14} /> : <Moon size={14} />}
-          <span className="hidden sm:inline text-[12px]">{dark ? "Light" : "Dark"}</span>
+          {dark
+            ? <Sun  size={14} strokeWidth={1.8} />
+            : <Moon size={14} strokeWidth={1.8} />}
+          <span className="hidden sm:inline">{dark ? "Light" : "Dark"}</span>
         </button>
       </div>
 
-      {/* ── Main split layout ── */}
-      <div className="flex min-h-screen">
-
-        {/* ════ LEFT PANEL — always dark, blobs live here ════ */}
-        <div
-          className="hidden lg:flex lg:flex-col lg:w-[42%] xl:w-[40%] relative overflow-hidden"
-          style={{ background: "#0f0f0f" }}
+      {/* ── Layer 2: Centered login card ── */}
+      <div
+        className="relative min-h-screen flex items-center justify-center px-4 py-16"
+        style={{ zIndex: 2 }}
+      >
+        <motion.div
+          initial={{ opacity: 0, y: 22, scale: 0.97 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          className="w-full"
+          style={{ maxWidth: 420 }}
         >
-          {/* Blobs — purple + pink only */}
-          <LeftPanelBlobs />
-
-          {/* Content — centered vertically */}
-          <div className="relative z-10 flex flex-col items-center justify-center h-full px-12 text-center">
-            {/* Logo badge */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8, y: 16 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <div
-                className="w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6"
-                style={{
-                  background: "rgba(255,255,255,1)",
-                  boxShadow: [
-                    "0 0 0 8px rgba(139,92,246,0.12)",
-                    "0 0 0 16px rgba(139,92,246,0.05)",
-                    "0 12px 32px rgba(0,0,0,0.35)",
-                  ].join(", "),
-                }}
-              >
-                <span className="text-[22px] font-black tracking-tight text-black select-none">SD</span>
-              </div>
-
-              <h2 className="text-2xl font-bold text-white mb-2 tracking-tight">
-                Portfolio Admin
-              </h2>
-              <p className="text-[13px] leading-relaxed" style={{ color: "rgba(255,255,255,0.35)" }}>
-                Manage your content,<br />track messages, update everything.
-              </p>
-            </motion.div>
-
-            {/* Decorative pill tags */}
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.6 }}
-              className="flex flex-wrap gap-2 justify-center mt-10"
-            >
-              {["Projects", "Experience", "Gallery", "Messages", "Skills"].map((tag) => (
-                <span
-                  key={tag}
-                  className="text-[11px] px-3 py-1.5 rounded-full font-medium"
-                  style={{
-                    background: "rgba(255,255,255,0.06)",
-                    border: "1px solid rgba(255,255,255,0.08)",
-                    color: "rgba(255,255,255,0.4)",
-                  }}
-                >
-                  {tag}
-                </span>
-              ))}
-            </motion.div>
-          </div>
-
-          {/* Subtle bottom line */}
           <div
-            className="absolute bottom-0 left-0 right-0 h-px"
-            style={{ background: "rgba(255,255,255,0.04)" }}
-          />
-        </div>
-
-        {/* ════ RIGHT PANEL — form, theme-aware ════ */}
-        <div
-          className="flex-1 flex flex-col items-center justify-center px-6 py-12 relative transition-colors duration-300"
-          style={{ background: rightBg }}
-        >
-          {/* Mobile logo (shown only below lg) */}
-          <div className="lg:hidden flex items-center gap-3 mb-10">
-            <div
-              className="w-10 h-10 rounded-xl flex items-center justify-center shadow-md"
-              style={{ background: "#0f0f0f" }}
-            >
-              <span className="text-white text-[13px] font-black tracking-tight select-none">SD</span>
-            </div>
-            <div>
-              <p className="text-sm font-bold" style={{ color: titleColor }}>Portfolio Admin</p>
-              <p className="text-[11px]" style={{ color: subtitleColor }}>Sign in to continue</p>
-            </div>
-          </div>
-
-          {/* Form card */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-            className="w-full"
-            style={{ maxWidth: 400 }}
+            className="rounded-2xl p-8 sm:p-10"
+            style={{
+              background:   cardBg,
+              border:       `1px solid ${cardBorder}`,
+              boxShadow:    cardShadow,
+              borderRadius: "16px",
+            }}
           >
             {/* Header */}
             <div className="mb-8">
-              <h1 className="text-[28px] font-bold tracking-tight" style={{ color: titleColor }}>
+              <h1
+                className="text-[26px] font-bold tracking-tight leading-tight"
+                style={{ color: titleColor }}
+              >
                 Welcome back
               </h1>
-              <p className="text-[13px] mt-1" style={{ color: subtitleColor }}>
+              <p className="text-[14px] mt-1.5" style={{ color: subtitleColor }}>
                 Sign in to your admin panel
               </p>
             </div>
-
-            {/* Divider */}
-            <div className="h-px mb-8" style={{ background: dividerColor }} />
 
             {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-5">
@@ -303,14 +268,10 @@ export default function AdminLoginPage() {
                   placeholder="admin@example.com"
                   required
                   autoComplete="email"
-                  className={`w-full rounded-lg px-4 py-3 text-sm outline-none transition-all duration-200 ${placeholderCls}`}
-                  style={{
-                    background: inputBg,
-                    border: `1px solid ${inputBorder}`,
-                    color: inputColor,
-                  }}
-                  onFocus={onInputFocus}
-                  onBlur={onInputBlur}
+                  className={`w-full rounded-lg px-4 py-3 text-[14px] outline-none transition-all duration-200 ${inputPh}`}
+                  style={{ background: inputBg, border: `1px solid ${inputBorder}`, color: inputColor }}
+                  onFocus={onFocus}
+                  onBlur={onBlur}
                 />
               </div>
 
@@ -330,14 +291,10 @@ export default function AdminLoginPage() {
                     placeholder="••••••••••"
                     required
                     autoComplete="current-password"
-                    className={`w-full rounded-lg px-4 py-3 pr-11 text-sm outline-none transition-all duration-200 ${placeholderCls}`}
-                    style={{
-                      background: inputBg,
-                      border: `1px solid ${inputBorder}`,
-                      color: inputColor,
-                    }}
-                    onFocus={onInputFocus}
-                    onBlur={onInputBlur}
+                    className={`w-full rounded-lg px-4 py-3 pr-11 text-[14px] outline-none transition-all duration-200 ${inputPh}`}
+                    style={{ background: inputBg, border: `1px solid ${inputBorder}`, color: inputColor }}
+                    onFocus={onFocus}
+                    onBlur={onBlur}
                   />
                   <button
                     type="button"
@@ -363,11 +320,11 @@ export default function AdminLoginPage() {
                     className="overflow-hidden"
                   >
                     <div
-                      className="flex items-center gap-2.5 rounded-lg px-4 py-3 text-sm"
+                      className="flex items-center gap-2.5 rounded-lg px-4 py-3 text-[13px]"
                       style={{
-                        background: "rgba(239,68,68,0.08)",
-                        border: "1px solid rgba(239,68,68,0.2)",
-                        color: "#ef4444",
+                        background:  "rgba(239,68,68,0.08)",
+                        border:      "1px solid rgba(239,68,68,0.2)",
+                        color:       "#ef4444",
                       }}
                     >
                       <AlertCircle size={14} className="shrink-0" />
@@ -377,76 +334,76 @@ export default function AdminLoginPage() {
                 )}
               </AnimatePresence>
 
-              {/* Submit */}
+              {/* Submit — shimmer button */}
               <motion.button
                 type="submit"
                 disabled={loading}
-                whileHover={loading ? {} : { scale: 1.015, boxShadow: "0 6px 28px rgba(139,92,246,0.45)" }}
+                whileHover={loading ? {} : { scale: 1.015 }}
                 whileTap={loading ? {} : { scale: 0.985 }}
-                className="w-full rounded-lg py-3 text-sm font-semibold flex items-center justify-center gap-2 transition-shadow duration-200"
+                className="login-shimmer-btn w-full rounded-lg py-3 text-[14px] font-semibold
+                           flex items-center justify-center gap-2 mt-1 select-none"
                 style={{
                   background: loading
                     ? "rgba(139,92,246,0.4)"
                     : "linear-gradient(135deg, #8b5cf6 0%, #a855f7 50%, #ec4899 100%)",
-                  color: "white",
-                  boxShadow: loading ? "none" : "0 4px 20px rgba(139,92,246,0.35)",
+                  color:     "white",
+                  boxShadow: loading
+                    ? "none"
+                    : "0 4px 18px rgba(139,92,246,0.38)",
                   letterSpacing: "0.01em",
+                  transition: "box-shadow 0.25s ease",
                 }}
               >
-                {loading ? <><ButtonSpinner />Signing in...</> : "Sign In"}
+                {loading ? <><BtnSpinner />Signing in...</> : "Sign In"}
               </motion.button>
             </form>
 
             {/* Footer */}
             <p
-              className="text-center text-[11px] mt-8 tracking-wide"
+              className="text-center text-[11px] mt-7 tracking-wide"
               style={{ color: footerColor }}
             >
               Restricted access · Authorized personnel only
             </p>
-          </motion.div>
-        </div>
+          </div>
+        </motion.div>
       </div>
 
       {/* ── Post-login loading overlay ── */}
       <AnimatePresence>
-        {showOverlay && (
+        {overlay && (
           <motion.div
             key="overlay"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.35 }}
+            transition={{ duration: 0.3 }}
             className="fixed inset-0 flex items-center justify-center"
-            style={{ background: "#0f0f0f", zIndex: 100 }}
+            style={{ background: dark ? "#0f0f13" : "#f5f6fa", zIndex: 100 }}
           >
-            <LoadingBlobs />
+            {/* FlickeringGrid in overlay too */}
+            <div className="absolute inset-0">
+              <FlickeringGrid
+                className="w-full h-full"
+                squareSize={4}
+                gridGap={6}
+                flickerChance={0.12}
+                color={gridColor}
+                maxOpacity={gridMaxOpacity}
+              />
+            </div>
+            <LightRays dark={dark} />
+
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.08, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-              className="relative z-10 flex flex-col items-center gap-5"
+              transition={{ delay: 0.06, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+              className="relative z-10 flex flex-col items-center gap-4"
             >
-              <div className="relative">
-                <div
-                  className="absolute inset-0 rounded-full"
-                  style={{
-                    background: "radial-gradient(circle, rgba(139,92,246,0.3) 0%, transparent 70%)",
-                    transform: "scale(1.9)",
-                    filter: "blur(14px)",
-                  }}
-                />
-                <GradientSpinner size={52} />
-              </div>
-              <motion.p
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.22, duration: 0.35 }}
-                className="text-[13px] tracking-wide"
-                style={{ color: "rgba(255,255,255,0.35)" }}
-              >
+              <GradientSpinner />
+              <p className="text-[13px] tracking-wide" style={{ color: subtitleColor }}>
                 Loading dashboard...
-              </motion.p>
+              </p>
             </motion.div>
           </motion.div>
         )}

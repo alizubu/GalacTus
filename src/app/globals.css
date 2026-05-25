@@ -219,6 +219,54 @@
   100% { transform: translate(-50px, 60px) scale(0.92); }
 }
 
+/* ── View Transition — circle expand for theme toggle ── */
+::view-transition-new(root),
+::view-transition-old(root) {
+  animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+::view-transition-new(root) {
+  animation: circle-expand 0.42s cubic-bezier(0.76, 0, 0.24, 1) forwards;
+}
+
+::view-transition-old(root) {
+  animation: none;
+  z-index: -1;
+}
+
+@keyframes circle-expand {
+  from { clip-path: circle(0% at var(--vt-x, calc(100% - 60px)) var(--vt-y, 32px)); }
+  to   { clip-path: circle(150% at var(--vt-x, calc(100% - 60px)) var(--vt-y, 32px)); }
+}
+
+/* ── Login shimmer button sweep ── */
+@keyframes shimmer-sweep {
+  0%   { transform: translateX(-100%) skewX(-15deg); }
+  100% { transform: translateX(250%) skewX(-15deg); }
+}
+
+.login-shimmer-btn { position: relative; overflow: hidden; }
+.login-shimmer-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.22) 50%, transparent 100%);
+  animation: shimmer-sweep 2.6s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* ── Admin dark mode base ── */
+.admin-dark {
+  color-scheme: dark;
+}
+.admin-dark .admin-topbar {
+  background: #16171f;
+  border-bottom-color: rgba(255,255,255,0.06);
+}
+.admin-dark .admin-main-bg {
+  background: #0f0f13;
+}
+
 /* ── Skill shimmer ── */
 @keyframes shimmer {
   0%   { background-position: 200% center; }
