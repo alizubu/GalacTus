@@ -1,19 +1,30 @@
 import { DATA } from "@/data/resume";
 import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Bricolage_Grotesque, DM_Sans, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-const geist = Geist({
+// Heading font — editorial, premium feel
+const bricolage = Bricolage_Grotesque({
+  subsets: ["latin"],
+  variable: "--font-heading",
+  weight: ["400", "700", "800"],
+  display: "swap",
+});
+
+// Body font — clean, readable
+const dmSans = DM_Sans({
   subsets: ["latin"],
   variable: "--font-sans",
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "500"],
+  display: "swap",
 });
 
 const geistMono = Geist_Mono({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
   variable: "--font-mono",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -62,7 +73,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         suppressHydrationWarning
         className={cn(
           "min-h-screen bg-background font-sans antialiased",
-          geist.variable,
+          bricolage.variable,
+          dmSans.variable,
           geistMono.variable
         )}
       >

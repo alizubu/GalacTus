@@ -1,6 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
 import BlurFade from "@/components/magicui/blur-fade";
-import BlurFadeText from "@/components/magicui/blur-fade-text";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
 import ContactSection from "@/components/section/contact-section";
@@ -13,6 +12,8 @@ import { FadeUp, BlurClear, StaggerContainer, StaggerItem } from "@/components/A
 import { SectionTitle } from "@/components/SectionTitle";
 import WorkSectionDynamic from "@/components/section/work-section";
 import SkillsSectionDynamic from "@/components/section/skills-section";
+import HeroText from "@/components/HeroText";
+import AnimatedAvatar from "@/components/AnimatedAvatar";
 import {
   getContent,
   getWork,
@@ -23,9 +24,7 @@ import {
   getTestimonials,
 } from "@/lib/portfolio-data";
 
-const BLUR_FADE_DELAY = 0.04;
-
-export const dynamic = "force-dynamic"; // base64 images in DB make ISR payload too large
+export const dynamic = "force-dynamic";
 
 export default async function Page() {
   const [content, work, projects, skills, education, gallery, testimonials] =
@@ -62,29 +61,11 @@ export default async function Page() {
       <section id="hero">
         <div className="mx-auto w-full space-y-6">
           <div className="gap-4 flex flex-col sm:flex-row sm:items-start justify-between">
-            <BlurFade delay={BLUR_FADE_DELAY} className="flex sm:order-2 sm:ml-4">
-              <Avatar className="size-24 sm:size-36 border-2 rounded-full shadow-xl ring-4 ring-muted shrink-0">
-                <AvatarImage alt={name} src={avatarUrl} />
-                <AvatarFallback>{initials}</AvatarFallback>
-              </Avatar>
+            <BlurFade delay={0.05} className="flex sm:order-2 sm:ml-4">
+              <AnimatedAvatar src={avatarUrl} name={name} initials={initials} />
             </BlurFade>
             <div className="gap-2 flex flex-col sm:order-1 flex-1 min-w-0">
-              <BlurFadeText
-                delay={BLUR_FADE_DELAY}
-                className="text-3xl font-bold tracking-tighter sm:text-4xl lg:text-5xl"
-                yOffset={8}
-                text={`Hi, I'm ${firstName}`}
-              />
-              <BlurFadeText
-                className="text-muted-foreground text-base sm:text-lg"
-                delay={BLUR_FADE_DELAY}
-                text={tagline}
-              />
-              <BlurFadeText
-                className="text-muted-foreground/70 text-sm"
-                delay={BLUR_FADE_DELAY * 2}
-                text={description}
-              />
+              <HeroText name={`Hi, I'm ${firstName}`} tagline={tagline} description={description} />
             </div>
           </div>
         </div>
@@ -126,16 +107,23 @@ export default async function Page() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-x-3 p-3 sm:p-4 rounded-2xl border bg-card/50
-                             hover:bg-card hover:shadow-sm transition-all duration-300 group"
+                             hover:bg-card hover:bg-[#fafafa] dark:hover:bg-card hover:shadow-sm transition-all duration-200 group"
                 >
                   {edu.logo ? (
                     <img
                       src={edu.logo}
                       alt={edu.school}
-                      className="size-10 p-1.5 border rounded-xl bg-card object-contain shrink-0 ring-2 ring-border/40"
+                      className="size-11 p-1 border border-[#ede9fe] rounded-[10px] bg-[#f5f3ff] dark:bg-card object-contain shrink-0"
                     />
                   ) : (
-                    <div className="size-10 rounded-xl border bg-muted shrink-0 ring-2 ring-border/40 flex items-center justify-center text-xs font-bold text-muted-foreground">
+                    <div
+                      className="size-11 rounded-[10px] shrink-0 flex items-center justify-center text-sm font-bold"
+                      style={{
+                        background: "linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%)",
+                        border: "1px solid #ede9fe",
+                        color: "#7c3aed",
+                      }}
+                    >
                       {edu.school.slice(0, 2).toUpperCase()}
                     </div>
                   )}
@@ -144,11 +132,18 @@ export default async function Page() {
                       {edu.school}
                       <ArrowUpRight className="h-3 w-3 text-muted-foreground opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200" aria-hidden />
                     </div>
-                    <div className="text-xs text-muted-foreground mt-1">{edu.degree}</div>
+                    <div className="text-xs text-muted-foreground mt-1 font-medium">{edu.degree}</div>
                   </div>
-                  <div className="text-xs tabular-nums text-muted-foreground/60 shrink-0 text-right">
+                  <span
+                    className="text-xs tabular-nums shrink-0 px-2.5 py-1 rounded-full"
+                    style={{
+                      background: "#f3f4f6",
+                      color: "#6b7280",
+                      fontSize: "11px",
+                    }}
+                  >
                     {edu.startYear}–{edu.endYear}
-                  </div>
+                  </span>
                 </Link>
               </StaggerItem>
             ))}

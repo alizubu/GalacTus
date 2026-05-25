@@ -6,24 +6,49 @@ import { motion, AnimatePresence, useInView } from "motion/react";
 import { ExternalLink } from "lucide-react";
 import type { WorkItem } from "@/lib/portfolio-data";
 
-function CompanyInitials({ company }: { company: string }) {
+// Company-specific gradient backgrounds when no logo
+const COMPANY_GRADIENTS = [
+  "linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)",   // blue
+  "linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%)",   // green
+  "linear-gradient(135deg, #ffedd5 0%, #fed7aa 100%)",   // orange
+  "linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%)",   // purple
+  "linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%)",   // pink
+];
+const COMPANY_TEXT_COLORS = ["#1d4ed8", "#15803d", "#c2410c", "#7e22ce", "#be185d"];
+
+function CompanyInitials({ company, index = 0 }: { company: string; index?: number }) {
   const initials = company.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
+  const idx = index % COMPANY_GRADIENTS.length;
   return (
-    <div className="size-9 rounded-xl border bg-muted flex items-center justify-center shrink-0 font-bold text-xs text-muted-foreground ring-1 ring-border/40">
+    <div
+      className="size-11 rounded-xl flex items-center justify-center shrink-0 text-xs font-bold"
+      style={{
+        background: COMPANY_GRADIENTS[idx],
+        border: "1px solid rgba(0,0,0,0.06)",
+        color: COMPANY_TEXT_COLORS[idx],
+        minWidth: 44,
+        minHeight: 44,
+      }}
+    >
       {initials}
     </div>
   );
 }
 
-function LogoImage({ src, alt }: { src: string; alt: string }) {
+function LogoImage({ src, alt, index = 0 }: { src: string; alt: string; index?: number }) {
   const [err, setErr] = useState(false);
-  if (!src || err) return <CompanyInitials company={alt} />;
+  if (!src || err) return <CompanyInitials company={alt} index={index} />;
   return (
-    <img
-      src={src} alt={alt}
-      className="size-9 rounded-xl border bg-card p-1.5 object-contain shrink-0 ring-1 ring-border/40"
-      onError={() => setErr(true)}
-    />
+    <div
+      className="size-11 rounded-xl flex items-center justify-center shrink-0 overflow-hidden"
+      style={{ background: "#f3f4f6", border: "1px solid #e5e7eb", minWidth: 44, minHeight: 44 }}
+    >
+      <img
+        src={src} alt={alt}
+        className="w-8 h-8 object-contain"
+        onError={() => setErr(true)}
+      />
+    </div>
   );
 }
 
@@ -69,11 +94,16 @@ export default function WorkSection({ items }: { items: WorkItem[] }) {
               </div>
 
               <div className="flex-1 min-w-0">
-                <button onClick={() => setOpen(isOpen ? null : work.id)} className="w-full text-left">
+                <motion.button
+                  onClick={() => setOpen(isOpen ? null : work.id)}
+                  className="w-full text-left"
+                  whileHover={{ x: 4 }}
+                  transition={{ duration: 0.2, ease: "easeOut" }}
+                >
                   <div className={`rounded-2xl border transition-all duration-300 overflow-hidden
                     ${isOpen ? "bg-card shadow-md" : "bg-card/40 hover:bg-card/80 hover:shadow-sm"}`}>
                     <div className="p-3.5 flex items-center gap-3">
-                      <LogoImage src={work.logo} alt={work.company} />
+                      <LogoImage src={work.logo} alt={work.company} index={idx} />
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
                           <span className="font-medium text-foreground text-sm leading-none">{work.company}</span>
@@ -116,7 +146,7 @@ export default function WorkSection({ items }: { items: WorkItem[] }) {
                       )}
                     </AnimatePresence>
                   </div>
-                </button>
+                </motion.button>
               </div>
             </motion.div>
           );

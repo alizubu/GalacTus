@@ -28,8 +28,8 @@ export function SectionTitle({
     >
       {/* Main title only — accent line removed */}
       <h2
-        className="text-2xl font-bold tracking-tight text-foreground leading-tight sm:text-3xl"
-        style={{ overflow: "hidden" }}
+        className="font-heading text-2xl font-bold sm:text-3xl"
+        style={{ letterSpacing: "-0.01em", lineHeight: 1.15, overflow: "hidden" }}
       >
         {words.map((word, i) => (
           <span
