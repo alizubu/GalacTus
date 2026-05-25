@@ -2,50 +2,95 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   LayoutDashboard, UserCircle, Briefcase, GraduationCap,
   Wrench, FolderKanban, ImageIcon, Mail, Settings,
   MessageSquare, ExternalLink, FileText, Menu, X, Navigation,
+  Users, CircleUser,
 } from "lucide-react";
 
-const nav = [
-  { href: "/admin",            label: "Dashboard",       icon: LayoutDashboard, exact: true },
-  { href: "/admin/hero",       label: "Hero",            icon: UserCircle },
-  { href: "/admin/about",      label: "About / Bio",     icon: FileText },
-  { href: "/admin/experience", label: "Work Experience", icon: Briefcase },
-  { href: "/admin/education",  label: "Education",       icon: GraduationCap },
-  { href: "/admin/skills",     label: "Skills",          icon: Wrench },
-  { href: "/admin/projects",   label: "Case Studies",    icon: FolderKanban },
-  { href: "/admin/gallery",    label: "Gallery",         icon: ImageIcon },
-  { href: "/admin/navbar",     label: "Navbar",          icon: Navigation },
-  { href: "/admin/messages",   label: "Messages",        icon: MessageSquare },
-  { href: "/admin/contact",    label: "Contact",         icon: Mail },
-  { href: "/admin/settings",   label: "Settings",        icon: Settings },
+// permissionKey = null → always visible; string → requires that key (or master role)
+const NAV_ITEMS = [
+  { href: "/admin",            label: "Dashboard",       icon: LayoutDashboard, permKey: null,         exact: true },
+  { href: "/admin/hero",       label: "Hero",            icon: UserCircle,      permKey: "hero" },
+  { href: "/admin/about",      label: "About / Bio",     icon: FileText,        permKey: "about" },
+  { href: "/admin/experience", label: "Work Experience", icon: Briefcase,       permKey: "experience" },
+  { href: "/admin/education",  label: "Education",       icon: GraduationCap,   permKey: "education" },
+  { href: "/admin/skills",     label: "Skills",          icon: Wrench,          permKey: "skills" },
+  { href: "/admin/projects",   label: "Case Studies",    icon: FolderKanban,    permKey: "projects" },
+  { href: "/admin/gallery",    label: "Gallery",         icon: ImageIcon,       permKey: "gallery" },
+  { href: "/admin/navbar",     label: "Navbar",          icon: Navigation,      permKey: "navbar" },
+  { href: "/admin/messages",   label: "Messages",        icon: MessageSquare,   permKey: "messages" },
+  { href: "/admin/contact",    label: "Contact",         icon: Mail,            permKey: "contact" },
+  { href: "/admin/settings",   label: "Settings",        icon: Settings,        permKey: "settings" },
+  // Master-only
+  { href: "/admin/users",      label: "Users",           icon: Users,           permKey: "__master__" },
 ];
 
-function SidebarContent({ pathname, heroName, onClose }: { pathname: string; heroName: string; onClose?: () => void }) {
-  const initials = heroName
-    .split(" ")
-    .filter(Boolean)
-    .map((n) => n[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase() || "SD";
+type SessionUser = {
+  id: string; name: string; email: string;
+  avatarUrl: string; role: string; permissions: string[];
+};
+
+function canSee(item: { permKey: string | null }, role: string, permissions: string[]): boolean {
+  if (item.permKey === null) return true;                   // always visible
+  if (item.permKey === "__master__") return role === "master";
+  if (role === "master") return true;                       // master sees everything
+  return permissions.includes(item.permKey);
+}
+
+function NavLink({ item, pathname, onClose, role, permissions }: {
+  item: typeof NAV_ITEMS[0]; pathname: string;
+  onClose?: () => void; role: string; permissions: string[];
+}) {
+  if (!canSee(item, role, permissions)) return null;
+  const active = item.exact
+    ? pathname === item.href
+    : pathname.startsWith(item.href) && item.href !== "/admin";
+
+  return (
+    <Link href={item.href} onClick={onClose}
+      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all duration-300 ${
+        active
+          ? "bg-white/12 text-white shadow-sm"
+          : "text-white/45 hover:text-white hover:bg-white/7"
+      }`}
+    >
+      <item.icon size={15} strokeWidth={active ? 2.2 : 1.7} className="shrink-0" />
+      {item.label}
+    </Link>
+  );
+}
+
+function SidebarContent({ pathname, sessionUser, onClose }: {
+  pathname: string; sessionUser: SessionUser; onClose?: () => void;
+}) {
+  const { name, avatarUrl, role, permissions } = sessionUser;
+  const initials = name.split(" ").filter(Boolean).map((n) => n[0]).join("").slice(0, 2).toUpperCase() || "SD";
+
+  const contentItems = NAV_ITEMS.filter(
+    (i) => i.permKey !== "__master__" && i.href !== "/admin/settings"
+  );
+  const manageItems = NAV_ITEMS.filter(
+    (i) => ["/admin/messages", "/admin/contact", "/admin/settings", "/admin/users"].includes(i.href)
+  );
 
   return (
     <div className="flex flex-col h-full">
       {/* Brand */}
       <div className="flex items-center justify-between px-6 py-6 border-b border-white/[0.06]">
         <div className="flex items-center gap-3.5">
-          {/* [N12] Dynamic initials */}
-          <div className="w-9 h-9 rounded-xl bg-white flex items-center justify-center shrink-0 shadow-md">
-            <span className="text-black text-[11px] font-black tracking-tight">{initials}</span>
+          <div className="w-9 h-9 rounded-xl bg-white flex items-center justify-center shrink-0 shadow-md overflow-hidden">
+            {avatarUrl
+              ? <img src={avatarUrl} alt={name} className="w-full h-full object-cover" />
+              : <span className="text-black text-[11px] font-black tracking-tight">{initials}</span>}
           </div>
           <div>
-            {/* [N12] Dynamic name */}
-            <p className="text-white text-sm font-bold leading-none">{heroName || "Portfolio Admin"}</p>
-            <p className="text-white/30 text-[11px] mt-0.5 font-medium">Portfolio Admin</p>
+            <p className="text-white text-sm font-bold leading-none truncate max-w-[140px]">{name || "Admin"}</p>
+            <p className="text-white/30 text-[11px] mt-0.5 font-medium capitalize">
+              {role === "master" ? "Master" : "User"}
+            </p>
           </div>
         </div>
         {onClose && (
@@ -58,40 +103,28 @@ function SidebarContent({ pathname, heroName, onClose }: { pathname: string; her
       {/* Nav */}
       <nav className="flex-1 py-5 px-3.5 space-y-1 overflow-y-auto admin-sidebar-scroll">
         <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-white/20 px-3 pb-2">Content</p>
-        {nav.slice(0, 9).map((item) => {
-          const active = item.exact
-            ? pathname === item.href
-            : pathname.startsWith(item.href) && item.href !== "/admin";
-          return (
-            <Link key={item.href} href={item.href} onClick={onClose}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all duration-300 ${
-                active
-                  ? "bg-white/12 text-white shadow-sm"
-                  : "text-white/45 hover:text-white hover:bg-white/7"
-              }`}
-            >
-              <item.icon size={15} strokeWidth={active ? 2.2 : 1.7} className="shrink-0" />
-              {item.label}
-            </Link>
-          );
-        })}
+        {contentItems.map((item) => (
+          <NavLink key={item.href} item={item} pathname={pathname}
+            onClose={onClose} role={role} permissions={permissions} />
+        ))}
 
         <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-white/20 px-3 pt-4 pb-2">Manage</p>
-        {nav.slice(9).map((item) => {
-          const active = pathname.startsWith(item.href);
-          return (
-            <Link key={item.href} href={item.href} onClick={onClose}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all duration-300 ${
-                active
-                  ? "bg-white/12 text-white shadow-sm"
-                  : "text-white/45 hover:text-white hover:bg-white/7"
-              }`}
-            >
-              <item.icon size={15} strokeWidth={active ? 2.2 : 1.7} className="shrink-0" />
-              {item.label}
-            </Link>
-          );
-        })}
+        {manageItems.map((item) => (
+          <NavLink key={item.href} item={item} pathname={pathname}
+            onClose={onClose} role={role} permissions={permissions} />
+        ))}
+
+        {/* My Profile — always visible */}
+        <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-white/20 px-3 pt-4 pb-2">Account</p>
+        <Link href="/admin/profile" onClick={onClose}
+          className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all duration-300 ${
+            pathname === "/admin/profile"
+              ? "bg-white/12 text-white shadow-sm"
+              : "text-white/45 hover:text-white hover:bg-white/7"
+          }`}>
+          <CircleUser size={15} className="shrink-0" />
+          My Profile
+        </Link>
       </nav>
 
       {/* Footer */}
@@ -106,18 +139,9 @@ function SidebarContent({ pathname, heroName, onClose }: { pathname: string; her
   );
 }
 
-export default function AdminSidebar() {
+export default function AdminSidebar({ sessionUser }: { sessionUser: SessionUser }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  // [N12] Fetch hero_name from DB dynamically
-  const [heroName, setHeroName] = useState("Shelvey Dias");
-
-  useEffect(() => {
-    fetch("/api/admin/content")
-      .then((r) => r.json())
-      .then((data) => { if (data.hero_name) setHeroName(data.hero_name); })
-      .catch(() => {});
-  }, []);
 
   return (
     <>
@@ -138,14 +162,14 @@ export default function AdminSidebar() {
         }`}
         style={{ background: "#0f0f0f" }}
       >
-        <SidebarContent pathname={pathname} heroName={heroName} onClose={() => setOpen(false)} />
+        <SidebarContent pathname={pathname} sessionUser={sessionUser} onClose={() => setOpen(false)} />
       </aside>
 
       <aside
         className="hidden lg:flex flex-col w-[240px] shrink-0 h-screen sticky top-0"
         style={{ background: "#0f0f0f", borderRight: "1px solid rgba(255,255,255,0.04)" }}
       >
-        <SidebarContent pathname={pathname} heroName={heroName} />
+        <SidebarContent pathname={pathname} sessionUser={sessionUser} />
       </aside>
     </>
   );

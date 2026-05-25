@@ -21,6 +21,15 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const session = await getSession();
   if (!session) redirect("/admin/login");
 
+  const sessionUser = {
+    id:          session.user.id          ?? "",
+    name:        session.user.name        ?? "",
+    email:       session.user.email       ?? "",
+    avatarUrl:   session.user.avatarUrl   ?? "",
+    role:        session.user.role        ?? "user",
+    permissions: session.user.permissions ?? [],
+  };
+
   return (
     <AdminThemeProvider>
       <AdminShell>
@@ -33,7 +42,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             error:   { iconTheme: { primary: "#ef4444", secondary: "#fff" } },
           }}
         />
-        <AdminSidebar />
+        <AdminSidebar sessionUser={sessionUser} />
         <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0, overflow: "hidden" }}>
           <AdminTopbar />
           <main style={{ flex: 1, overflowY: "auto", padding: "48px 60px" }} className="admin-scroll admin-main-bg">
