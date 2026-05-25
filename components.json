@@ -1,8 +1,11 @@
 {
+  "_comment": "@alizubu",
+
   "$schema": "https://ui.shadcn.com/schema.json",
   "style": "new-york",
   "rsc": true,
   "tsx": true,
+
   "tailwind": {
     "config": "tailwind.config.ts",
     "css": "src/app/globals.css",
@@ -10,15 +13,14 @@
     "cssVariables": true,
     "prefix": ""
   },
+
   "iconLibrary": "lucide",
+
   "aliases": {
     "components": "@/components",
     "utils": "@/lib/utils",
     "ui": "@/components/ui",
     "lib": "@/lib",
     "hooks": "@/hooks"
-  },
-  "registries": {
-    "@svgl": "https://svgl.app/r/{name}.json"
   }
 }
