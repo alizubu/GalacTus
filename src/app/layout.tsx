@@ -1,18 +1,26 @@
 import { DATA } from "@/data/resume";
 import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans, Inter, Geist_Mono } from "next/font/google";
+import { Space_Grotesk, Manrope, Inter, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-// Heading font — editorial, premium, marketing-forward
-const plusJakarta = Plus_Jakarta_Sans({
+// H1 / big headings — Space Grotesk, medium-bold
+const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
   variable: "--font-heading",
-  weight: ["600", "700", "800"],
+  weight: ["500", "600", "700"],
   display: "swap",
 });
 
-// Body font — most readable, gold standard
+// Sub-headings — Manrope, clean and modern
+const manrope = Manrope({
+  subsets: ["latin"],
+  variable: "--font-subheading",
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+});
+
+// Paragraph / body — Inter, gold standard for readability
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-sans",
@@ -73,7 +81,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         suppressHydrationWarning
         className={cn(
           "min-h-screen bg-background font-sans antialiased",
-          plusJakarta.variable,
+          spaceGrotesk.variable,
+          manrope.variable,
           inter.variable,
           geistMono.variable
         )}

@@ -189,7 +189,7 @@ export default function SkillsSection({ items }: { items: SkillItem[] }) {
                   <CatIcon size={14} strokeWidth={2.2} />
                 </span>
                 <span
-                  className="font-heading text-[11.5px] font-bold uppercase tracking-[0.14em]"
+                  className="font-subheading text-[11.5px] font-bold uppercase tracking-[0.14em]"
                   style={{ color: cat.accent }}
                 >
                   {cat.label}

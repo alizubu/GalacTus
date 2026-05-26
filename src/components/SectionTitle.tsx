@@ -34,11 +34,11 @@ export function SectionTitle({ title, subtitle, align = "left", className = "" }
 
       {/* Main heading */}
       <h2
-        className="font-heading text-foreground"
+        className="font-subheading text-foreground"
         style={{
           fontWeight: 700,
           fontSize: "clamp(1.5rem, 3vw, 1.875rem)",
-          letterSpacing: "-0.025em",
+          letterSpacing: "-0.022em",
           lineHeight: 1.18,
           overflow: "hidden",
         }}
