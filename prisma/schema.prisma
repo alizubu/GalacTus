@@ -45,9 +45,10 @@ model Project {
 }
 
 model Skill {
-  id    String @id @default(auto()) @map("_id") @db.ObjectId
-  name  String
-  order Int    @default(0)
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  name    String
+  iconUrl String @default("")
+  order   Int    @default(0)
 }
 
 model Education {

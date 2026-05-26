@@ -37,6 +37,7 @@ export type ProjectItem = {
 export type SkillItem = {
   id: string;
   name: string;
+  iconUrl: string;
   order: number;
 };
 
@@ -147,7 +148,7 @@ export async function getSkills(): Promise<SkillItem[]> {
     return await db.skill.findMany({ orderBy: { order: "asc" } });
   } catch (err) {
     console.error("getSkills DB error:", err);
-    return DATA.skills.map((s, i) => ({ id: String(i), name: s.name, order: i }));
+    return DATA.skills.map((s, i) => ({ id: String(i), name: s.name, iconUrl: "", order: i }));
   }
 }
 
