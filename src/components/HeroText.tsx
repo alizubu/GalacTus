@@ -18,7 +18,7 @@ export default function HeroText({ name, tagline, description }: HeroTextProps) 
       <h1
         className="font-heading"
         style={{
-          fontWeight: 800,
+          fontWeight: 600,
           fontSize: "clamp(2.4rem, 6vw, 4.5rem)",
           letterSpacing: "-0.03em",
           lineHeight: 1.05,
