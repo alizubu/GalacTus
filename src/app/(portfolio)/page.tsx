@@ -74,7 +74,7 @@ export default async function Page() {
       {/* ── About ── */}
       <section id="about">
         <div className="flex min-h-0 flex-col gap-y-5">
-          <SectionTitle title="About" subtitle="Who I Am" />
+          <SectionTitle title="About" />
           <FadeUp delay={0.1}>
             <div
               className="prose max-w-full font-sans leading-relaxed text-foreground/80 dark:prose-invert [&>p]:text-justify"
@@ -88,7 +88,7 @@ export default async function Page() {
       {/* ── Work Experience ── */}
       <section id="work">
         <div className="flex min-h-0 flex-col gap-y-5">
-          <SectionTitle title="Work Experience" subtitle="Career Timeline" />
+          <SectionTitle title="Work Experience" />
           <FadeUp delay={0.1}>
             <WorkSectionDynamic items={work} />
           </FadeUp>
@@ -98,7 +98,7 @@ export default async function Page() {
       {/* ── Education ── */}
       <section id="education">
         <div className="flex min-h-0 flex-col gap-y-5">
-          <SectionTitle title="Education" subtitle="Academic Background" />
+          <SectionTitle title="Education" />
           <StaggerContainer className="flex flex-col gap-2.5 sm:gap-3" staggerDelay={0.1}>
             {education.map((edu) => (
               <StaggerItem key={edu.id}>
@@ -154,7 +154,7 @@ export default async function Page() {
       {/* ── Skills ── */}
       <section id="skills">
         <div className="flex min-h-0 flex-col gap-y-5">
-          <SectionTitle title="Skills" subtitle="Technical Expertise" />
+          <SectionTitle title="Skills" />
           <SkillsSectionDynamic items={skills} />
         </div>
       </section>
