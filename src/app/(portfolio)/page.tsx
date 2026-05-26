@@ -1,6 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
 import BlurFade from "@/components/magicui/blur-fade";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
 import ContactSection from "@/components/section/contact-section";
 import GallerySection from "@/components/section/gallery-section";
