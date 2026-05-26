@@ -1,28 +1,28 @@
 import { DATA } from "@/data/resume";
 import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
-import { Bricolage_Grotesque, DM_Sans, Geist_Mono } from "next/font/google";
+import { Plus_Jakarta_Sans, Inter, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-// Heading font — editorial, premium feel
-const bricolage = Bricolage_Grotesque({
+// Heading font — editorial, premium, marketing-forward
+const plusJakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
   variable: "--font-heading",
-  weight: ["400", "700", "800"],
+  weight: ["600", "700", "800"],
   display: "swap",
 });
 
-// Body font — clean, readable
-const dmSans = DM_Sans({
+// Body font — most readable, gold standard
+const inter = Inter({
   subsets: ["latin"],
   variable: "--font-sans",
-  weight: ["400", "500"],
+  weight: ["400", "500", "600"],
   display: "swap",
 });
 
 const geistMono = Geist_Mono({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["400", "500", "600"],
   variable: "--font-mono",
   display: "swap",
 });
@@ -73,8 +73,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         suppressHydrationWarning
         className={cn(
           "min-h-screen bg-background font-sans antialiased",
-          bricolage.variable,
-          dmSans.variable,
+          plusJakarta.variable,
+          inter.variable,
           geistMono.variable
         )}
       >

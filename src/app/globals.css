@@ -566,14 +566,20 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: var(--font-sans), 'DM Sans', sans-serif;
+    font-family: var(--font-sans), 'Inter', sans-serif;
+    font-size: 15px;
+    line-height: 1.65;
+    font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     /* Use dynamic viewport height to avoid mobile toolbar layout shift */
     min-height: 100dvh;
   }
 
-  /* Apply Bricolage Grotesque to ALL headings site-wide */
+  /* Apply Plus Jakarta Sans to ALL headings site-wide */
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-heading), 'Bricolage Grotesque', sans-serif;
+    font-family: var(--font-heading), 'Plus Jakarta Sans', sans-serif;
+    font-feature-settings: "kern" 1, "ss01" 1;
   }
 
   /* Improve prose body text contrast in both modes */
