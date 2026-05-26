@@ -1,17 +1,22 @@
 import { Icons } from "@/components/icons";
 import { HomeIcon } from "lucide-react";
 
+/**
+ * Static fallback data — used when DB is unavailable.
+ * Keep this in sync with the live database content.
+ * Primary source of truth is MongoDB; this is the safety net.
+ */
 export const DATA = {
   name: "Shelvey Dias",
   initials: "SD",
   url: "https://www.shelveyswork.com",
   location: "Chittagong, Bangladesh",
   locationLink: "https://maps.app.goo.gl/chittagong",
-  description:
-    "Corporate Marketing Strategist & Digital Growth Architect",
+  description: "Corporate Marketing Strategist & Digital Growth Expert",
   summary:
     "With 5+ years of hands-on experience in corporate marketing and digital growth, I help businesses build powerful online identities and achieve measurable results. From launching targeted ad campaigns to designing high-converting websites, my approach is always data-backed and results-driven. No fake promises — only strategies that work.\n\nI specialize in Meta Ads, Google Ads, SEO, and web development, working with businesses across logistics, manufacturing, and export sectors. Based in Chittagong, Bangladesh, I've delivered 50+ projects with a 100% client satisfaction rate.",
   avatarUrl: "/assets/images/shelvey.jpeg",
+
   skills: [
     { name: "Meta Ads Manager" },
     { name: "Google Ads" },
@@ -37,12 +42,14 @@ export const DATA = {
     { name: "Content Strategy" },
     { name: "Copywriting" },
   ],
+
   navbar: [
     { href: "/", icon: HomeIcon, label: "Home" },
   ],
+
   contact: {
     email: "shelveyedias@gmail.com",
-    tel: "01835412133",
+    tel: "+880 1835-412133",
     social: {
       LinkedIn: {
         name: "LinkedIn",
@@ -138,13 +145,8 @@ export const DATA = {
       dates: "2 Weeks",
       active: true,
       description:
-        "Chittagong-based CNF & Freight company RNB Shipping had zero online presence. Corporate clients couldn't verify them digitally. Built a high-end corporate website featuring service modules and a direct inquiry funnel. **Result:** Established a professional digital identity for the brand with 100% client satisfaction.",
-      technologies: [
-        "WordPress",
-        "Elementor",
-        "SEO",
-        "UI/UX Design",
-      ],
+        "Chittagong-based CNF & Freight company RNB Shipping had zero online presence. Corporate clients couldn't verify them digitally. Built a high-end corporate website featuring service modules and a direct inquiry funnel. Result: Established a professional digital identity for the brand with 100% client satisfaction.",
+      technologies: ["WordPress", "Elementor", "SEO", "UI/UX Design"],
       links: [],
       image: "",
       video: "",
@@ -155,13 +157,8 @@ export const DATA = {
       dates: "3 Weeks",
       active: true,
       description:
-        "GSL Export LTD, a toy manufacturer, lacked a centralized platform to showcase their global manufacturing standards. Designed and developed a premium product showcase website with multi-region business highlights. **Result:** Streamlined the international buyer inquiry process and increased brand trust globally.",
-      technologies: [
-        "WordPress",
-        "Webflow",
-        "UI/UX Design",
-        "Content Strategy",
-      ],
+        "GSL Export LTD, a toy manufacturer, lacked a centralized platform to showcase their global manufacturing standards. Designed and developed a premium product showcase website with multi-region business highlights. Result: Streamlined the international buyer inquiry process and increased brand trust globally.",
+      technologies: ["WordPress", "Webflow", "UI/UX Design", "Content Strategy"],
       links: [],
       image: "",
       video: "",
@@ -172,13 +169,8 @@ export const DATA = {
       dates: "Ongoing",
       active: true,
       description:
-        "Designed and managed a full-funnel Meta Ads campaign for a Chittagong-based logistics company. Built custom audiences, A/B tested creatives, and optimized for cost-per-lead. **Result:** 3x increase in qualified leads within the first 60 days at 40% lower CPL than industry average.",
-      technologies: [
-        "Meta Ads Manager",
-        "Facebook Pixel",
-        "Canva",
-        "Copywriting",
-      ],
+        "Designed and managed a full-funnel Meta Ads campaign for a Chittagong-based logistics company. Built custom audiences, A/B tested creatives, and optimized for cost-per-lead. Result: 3x increase in qualified leads within the first 60 days at 40% lower CPL than industry average.",
+      technologies: ["Meta Ads Manager", "Facebook Pixel", "Canva", "Copywriting"],
       links: [],
       image: "",
       video: "",
@@ -189,13 +181,8 @@ export const DATA = {
       dates: "1 Week",
       active: true,
       description:
-        "Built a targeted B2B lead database for an export company using LinkedIn Sales Navigator, Apollo.io, and Hunter.io. Verified 500+ decision-maker contacts and set up an automated cold email sequence. **Result:** 18% reply rate and 6 qualified meetings booked in the first campaign cycle.",
-      technologies: [
-        "LinkedIn Sales Navigator",
-        "Apollo.io",
-        "Hunter.io",
-        "Google Sheets",
-      ],
+        "Built a targeted B2B lead database for an export company using LinkedIn Sales Navigator, Apollo.io, and Hunter.io. Verified 500+ decision-maker contacts and set up an automated cold email sequence. Result: 18% reply rate and 6 qualified meetings booked in the first campaign cycle.",
+      technologies: ["LinkedIn Sales Navigator", "Apollo.io", "Hunter.io", "Google Sheets"],
       links: [],
       image: "",
       video: "",
@@ -254,67 +241,17 @@ export const DATA = {
   ],
 
   gallery: [
-    {
-      src: "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=800&q=80",
-      alt: "Social Media Campaign — Product Launch",
-      category: "Social Media",
-    },
-    {
-      src: "https://images.unsplash.com/photo-1558655146-9f40138edfeb?w=800&q=80",
-      alt: "Corporate Brand Identity",
-      category: "Branding",
-    },
-    {
-      src: "https://images.unsplash.com/photo-1626785774573-4b799315345d?w=800&q=80",
-      alt: "Instagram Story — Event Promo",
-      category: "Social Media",
-    },
-    {
-      src: "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=800&q=80",
-      alt: "Annual Report Cover Design",
-      category: "Corporate",
-    },
-    {
-      src: "https://images.unsplash.com/photo-1634942537034-2531766767d1?w=800&q=80",
-      alt: "LinkedIn Banner — Tech Startup",
-      category: "Social Media",
-    },
-    {
-      src: "https://images.unsplash.com/photo-1600132806370-bf17e65e942f?w=800&q=80",
-      alt: "Brand Style Guide",
-      category: "Branding",
-    },
-    {
-      src: "https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?w=800&q=80",
-      alt: "Facebook Ad Creative",
-      category: "Social Media",
-    },
-    {
-      src: "https://images.unsplash.com/photo-1542744094-3a31f272c490?w=800&q=80",
-      alt: "Corporate Presentation Deck",
-      category: "Corporate",
-    },
-    {
-      src: "https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=800&q=80",
-      alt: "Instagram Feed — Fashion Brand",
-      category: "Social Media",
-    },
-    {
-      src: "https://images.unsplash.com/photo-1572044162444-ad60f128bdea?w=800&q=80",
-      alt: "Logo & Visual Identity",
-      category: "Branding",
-    },
-    {
-      src: "https://images.unsplash.com/photo-1559028012-481c04fa702d?w=800&q=80",
-      alt: "Twitter/X Campaign Poster",
-      category: "Social Media",
-    },
-    {
-      src: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=800&q=80",
-      alt: "Corporate Event Banner",
-      category: "Corporate",
-    },
+    { src: "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=800&q=80", alt: "Social Media Campaign — Product Launch", category: "Social Media" },
+    { src: "https://images.unsplash.com/photo-1558655146-9f40138edfeb?w=800&q=80", alt: "Corporate Brand Identity", category: "Branding" },
+    { src: "https://images.unsplash.com/photo-1626785774573-4b799315345d?w=800&q=80", alt: "Instagram Story — Event Promo", category: "Social Media" },
+    { src: "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=800&q=80", alt: "Annual Report Cover Design", category: "Corporate" },
+    { src: "https://images.unsplash.com/photo-1634942537034-2531766767d1?w=800&q=80", alt: "LinkedIn Banner — Tech Startup", category: "Social Media" },
+    { src: "https://images.unsplash.com/photo-1600132806370-bf17e65e942f?w=800&q=80", alt: "Brand Style Guide", category: "Branding" },
+    { src: "https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?w=800&q=80", alt: "Facebook Ad Creative", category: "Social Media" },
+    { src: "https://images.unsplash.com/photo-1542744094-3a31f272c490?w=800&q=80", alt: "Corporate Presentation Deck", category: "Corporate" },
+    { src: "https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=800&q=80", alt: "Instagram Feed — Fashion Brand", category: "Social Media" },
+    { src: "https://images.unsplash.com/photo-1572044162444-ad60f128bdea?w=800&q=80", alt: "Logo & Visual Identity", category: "Branding" },
+    { src: "https://images.unsplash.com/photo-1559028012-481c04fa702d?w=800&q=80", alt: "Twitter/X Campaign Poster", category: "Social Media" },
+    { src: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=800&q=80", alt: "Corporate Event Banner", category: "Corporate" },
   ],
-
-  // gallery array kept above
 } as const;
