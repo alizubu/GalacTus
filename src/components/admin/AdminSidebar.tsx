@@ -7,7 +7,7 @@ import {
   LayoutDashboard, UserCircle, Briefcase, GraduationCap,
   Wrench, FolderKanban, ImageIcon, Mail, Settings,
   MessageSquare, ExternalLink, FileText, Menu, X, Navigation,
-  Users, CircleUser,
+  Users, CircleUser, Star,
 } from "lucide-react";
 
 // permissionKey = null → always visible; string → requires that key (or master role)
@@ -19,11 +19,12 @@ const NAV_ITEMS = [
   { href: "/admin/education",  label: "Education",       icon: GraduationCap,   permKey: "education" },
   { href: "/admin/skills",     label: "Skills",          icon: Wrench,          permKey: "skills" },
   { href: "/admin/projects",   label: "Case Studies",    icon: FolderKanban,    permKey: "projects" },
-  { href: "/admin/gallery",    label: "Gallery",         icon: ImageIcon,       permKey: "gallery" },
-  { href: "/admin/navbar",     label: "Navbar",          icon: Navigation,      permKey: "navbar" },
-  { href: "/admin/messages",   label: "Messages",        icon: MessageSquare,   permKey: "messages" },
-  { href: "/admin/contact",    label: "Contact",         icon: Mail,            permKey: "contact" },
-  { href: "/admin/settings",   label: "Settings",        icon: Settings,        permKey: "settings" },
+  { href: "/admin/gallery",        label: "Gallery",         icon: ImageIcon,       permKey: "gallery" },
+  { href: "/admin/navbar",         label: "Navbar",          icon: Navigation,      permKey: "navbar" },
+  { href: "/admin/testimonials",   label: "Testimonials",    icon: Star,            permKey: "testimonials" },
+  { href: "/admin/messages",       label: "Messages",        icon: MessageSquare,   permKey: "messages" },
+  { href: "/admin/contact",        label: "Contact",         icon: Mail,            permKey: "contact" },
+  { href: "/admin/settings",       label: "Settings",        icon: Settings,        permKey: "settings" },
   // Master-only
   { href: "/admin/users",      label: "Users",           icon: Users,           permKey: "__master__" },
 ];
@@ -70,7 +71,10 @@ function SidebarContent({ pathname, sessionUser, onClose }: {
   const initials = name.split(" ").filter(Boolean).map((n) => n[0]).join("").slice(0, 2).toUpperCase() || "SD";
 
   const contentItems = NAV_ITEMS.filter(
-    (i) => i.permKey !== "__master__" && i.href !== "/admin/settings"
+    (i) => i.permKey !== "__master__"
+        && i.href !== "/admin/settings"
+        && i.href !== "/admin/messages"
+        && i.href !== "/admin/contact"
   );
   const manageItems = NAV_ITEMS.filter(
     (i) => ["/admin/messages", "/admin/contact", "/admin/settings", "/admin/users"].includes(i.href)
