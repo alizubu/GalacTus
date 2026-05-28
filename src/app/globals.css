@@ -505,6 +505,10 @@
   background-color: #1a1b25 !important;
   color:            rgba(255,255,255,0.88) !important;
 }
+/* ProseMirror placeholder */
+.admin-dark .ProseMirror p.is-editor-empty:first-child::before {
+  color: rgba(255,255,255,0.22) !important;
+}
 .admin-dark .tiptap-toolbar {
   background-color: #16171f !important;
   border-color:     rgba(255,255,255,0.08) !important;

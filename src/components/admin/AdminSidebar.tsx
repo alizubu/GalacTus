@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   LayoutDashboard, UserCircle, Briefcase, GraduationCap,
   Wrench, FolderKanban, ImageIcon, Mail, Settings,
@@ -142,6 +142,24 @@ function SidebarContent({ pathname, sessionUser, onClose }: {
 export default function AdminSidebar({ sessionUser }: { sessionUser: SessionUser }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  // Fetch fresh profile data client-side so avatar updates immediately after profile save
+  const [liveUser, setLiveUser] = useState<SessionUser>(sessionUser);
+
+  useEffect(() => {
+    fetch("/api/admin/profile")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.id) {
+          setLiveUser((prev) => ({
+            ...prev,
+            name:      data.name      ?? prev.name,
+            avatarUrl: data.avatarUrl ?? prev.avatarUrl,
+            role:      data.role      ?? prev.role,
+          }));
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   return (
     <>
@@ -162,14 +180,14 @@ export default function AdminSidebar({ sessionUser }: { sessionUser: SessionUser
         }`}
         style={{ background: "#0f0f0f" }}
       >
-        <SidebarContent pathname={pathname} sessionUser={sessionUser} onClose={() => setOpen(false)} />
+        <SidebarContent pathname={pathname} sessionUser={liveUser} onClose={() => setOpen(false)} />
       </aside>
 
       <aside
         className="hidden lg:flex flex-col w-[240px] shrink-0 h-screen sticky top-0"
         style={{ background: "#0f0f0f", borderRight: "1px solid rgba(255,255,255,0.04)" }}
       >
-        <SidebarContent pathname={pathname} sessionUser={sessionUser} />
+        <SidebarContent pathname={pathname} sessionUser={liveUser} />
       </aside>
     </>
   );

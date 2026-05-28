@@ -33,7 +33,7 @@ function ToolBtn({
       className={`p-1.5 rounded-md text-sm transition-all ${
         active
           ? "bg-gray-900 text-white"
-          : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+          : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 admin-dark:text-white/55 admin-dark:hover:bg-white/10 admin-dark:hover:text-white"
       }`}
     >
       {children}
@@ -54,7 +54,7 @@ export default function RichTextEditor({ content, onChange, placeholder }: Props
     onUpdate: ({ editor }) => onChange(editor.getHTML()),
     editorProps: {
       attributes: {
-        class: "prose prose-sm max-w-none min-h-[280px] px-4 py-3 focus:outline-none text-gray-900",
+        class: "prose prose-sm max-w-none min-h-[280px] px-4 py-3 focus:outline-none",
       },
     },
   });
@@ -115,12 +115,12 @@ export default function RichTextEditor({ content, onChange, placeholder }: Props
   ];
 
   return (
-    <div className="border border-gray-200 rounded-xl overflow-hidden bg-white">
+    <div className="border border-gray-200 rounded-xl overflow-hidden bg-white admin-dark:bg-[#1a1b25] admin-dark:border-white/[0.08]">
       {/* Toolbar */}
-      <div className="flex flex-wrap items-center gap-0.5 px-3 py-2 border-b border-gray-100 bg-gray-50">
+      <div className="flex flex-wrap items-center gap-0.5 px-3 py-2 border-b border-gray-100 bg-gray-50 admin-dark:bg-[#16171f] admin-dark:border-white/[0.06]">
         {groups.map((group, gi) => (
           <div key={gi} className="flex items-center gap-0.5">
-            {gi > 0 && <div className="w-px h-4 bg-gray-200 mx-1" />}
+            {gi > 0 && <div className="w-px h-4 bg-gray-200 admin-dark:bg-white/10 mx-1" />}
             {group}
           </div>
         ))}
