@@ -10,7 +10,7 @@ const ALLOWED_KEYS = new Set([
   "about_bio","about_stat_years","about_stat_projects","about_stat_satisfaction","about_stat_industries",
   "contact_email","contact_phone","contact_address","contact_linkedin",
   "contact_website","contact_heading","contact_subtext","contact_availability",
-  "site_title","site_description","site_url","footer_text","og_image","__admin_password_hash__",
+  "site_title","site_description","site_url","footer_text","og_image","site_favicon","__admin_password_hash__",
 ]);
 
 // Allowed key prefixes for dynamically-keyed content (e.g. edu_logo_<id>, exp_logo_<id>)
@@ -21,7 +21,7 @@ function isAllowedKey(key: string): boolean {
 }
 
 // Keys whose values might be images — upload to Cloudinary if base64
-const IMAGE_KEYS = new Set(["hero_avatar_url", "og_image"]);
+const IMAGE_KEYS = new Set(["hero_avatar_url", "og_image", "site_favicon"]);
 
 export async function GET() {
   const guard = await requireAdmin();

@@ -11,19 +11,27 @@ export async function generateMetadata(): Promise<Metadata> {
   try {
     const { db } = await import("@/lib/db");
     const items = await db.content.findMany({
-      where: { key: { in: ["site_title", "site_description", "site_url", "og_image"] } },
+      where: { key: { in: ["site_title", "site_description", "site_url", "og_image", "site_favicon"] } },
     });
     const map: Record<string, string> = {};
     items.forEach((i) => (map[i.key] = i.value));
 
-    const title = map.site_title || "Shelvey Dias";
+    const title       = map.site_title       || "Shelvey Dias";
     const description = map.site_description || "Corporate Marketing Strategist & Digital Growth Expert";
-    const url = map.site_url || "https://www.shelveyswork.com";
-    const ogImage = map.og_image || undefined;
+    const url         = map.site_url         || "https://www.shelveyswork.com";
+    const ogImage     = map.og_image         || undefined;
+    const faviconUrl  = map.site_favicon     || undefined;
 
     return {
       title,
       description,
+      ...(faviconUrl ? {
+        icons: {
+          icon:    [{ url: faviconUrl }],
+          apple:   [{ url: faviconUrl }],
+          shortcut:[{ url: faviconUrl }],
+        },
+      } : {}),
       openGraph: {
         title,
         description,
